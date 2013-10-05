@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- When selected, use qache_active.png -->
+    <item android:drawable="@drawable/qache_active"
+		android:state_checked="true" />
+    <!-- When not selected, use qache_inactive.png -->
+    <item android:drawable="@drawable/qache_inactive"
+		android:state_checked="false"/>
+</selector>

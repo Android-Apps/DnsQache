@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">DnsQache</string>
+    <string name="action_settings">Settings</string>
+    <string name="text_name_servers">Domain Name Servers</string>
+    <string name="default_name_server1">220.67.222.222</string>
+    <string name="default_name_server2">220.67.220.220</string>
+    <string name="hint_ip_address">IP address (e.g., 8.8.4.4)</string>
+    <string name="btn_update_name_servers">Update Name Servers</string>
+    <string name="qache_is_running">DNS name caching service</string>
+    <string name="binaries_installed">binaries successfully installed.</string>
+    <string name="qache_start_script">qachestart.scr</string>
+    <string name="app_version_token">Q@Version</string>
+    <string name="hint_cache_size">Enter a cache size (default 1000)</string>
+    <string name="text_max_cache_size">Maximum DNS Lookups to Cache</string>
+    <string name="text_dns_primary">Primary</string>
+    <string name="text_dns_secondary">Secondary</string>
+    <string name="default_cache_size">1000</string>
+    <string name="btn_activateonboot">Activate DnsQache on boot</string>
+
+    <string-array name="array_dns_provider_names">
+        <item>DNSAdvantage</item>
+        <item>Google</item>
+        <item>Norton</item>
+        <item>OpenDNS</item>
+        <item>ScrubIT</item>
+        <item>Verizon1</item>
+        <item>Verizon2</item>
+        <item>Verizon3</item>
+        <item>Verizon4</item>
+        <item>Verizon5</item>
+    </string-array>
+    <string-array name="DNSAdvantage">
+        <item>156.154.70.1</item>
+        <item>156.154.71.1</item>
+    </string-array>
+    <string-array name="Google">
+        <item>8.8.8.8</item>
+        <item>8.8.4.4</item>
+    </string-array>
+    <string-array name="Norton">
+        <item>198.153.192.1</item>
+        <item>198.153.194.1</item>
+    </string-array>
+    <string-array name="OpenDNS">
+        <item>208.67.222.222</item>
+        <item>208.67.220.220</item>
+    </string-array>
+    <string-array name="ScrubIT">
+        <item>67.138.54.100</item>
+        <item>207.225.209.66</item>
+    </string-array>
+    <string-array name="Verizon1">
+        <item>4.2.2.1</item>
+        <item>4.2.2.2</item>
+    </string-array>
+    <string-array name="Verizon2">
+        <item>4.2.2.2</item>
+        <item>4.2.2.3</item>
+    </string-array>
+    <string-array name="Verizon3">
+        <item>4.2.2.3</item>
+        <item>4.2.2.4</item>
+    </string-array>
+    <string-array name="Verizon4">
+        <item>4.2.2.4</item>
+        <item>4.2.2.5</item>
+    </string-array>
+    <string-array name="Verizon5">
+        <item>4.2.2.5</item>
+        <item>4.2.2.6</item>
+    </string-array>
+
+    <string-array name="array_proxy_apps">
+        <item>No Proxy</item>
+        <item>Polipo Caching Proxy</item>
+        <item>TinyProxy (No Caching)</item>
+    </string-array>
+
+     <string-array name="array_proxy_binaries">
+        <item>none</item>
+        <item>polipo</item>
+        <item>tinyproxy</item>
+        </string-array>
+
+    <string name="property_dnsmasq_bind_interfaces">bind-interfaces</string>
+    <string name="btn_log_queries">Log DNS Queries</string>
+    <string name="menu_view_log">View Log</string>
+    <string name="menu_about">About</string>
+    <string name="title_activity_view_log">ViewLogActivity</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="log_activity_filenotfound">The log file does not (yet) exist.</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="text_qache_start">Click below to start the qache:</string>
+    <string name="text_qache_stop">Click below to stop the qache.</string>
+    <string name="text_empty"></string>
+    <string name="text_no_proxy">No Proxy</string>
+    <string name="text_proxy_polipo">Polipo</string>
+    <string name="text_proxy_tinyproxy">TinyProxy</string>
+    <string name="text_proxy_selection">Proxy</string>
+    <string name="prompt_spinner_proxy_type">Select a Local Proxy App</string>
+    <string name="res_array_proxy_apps">array_proxy_binaries</string>
+    
+</resources>

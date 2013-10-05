@@ -1,0 +1,47 @@
+<project name="DnsQache" basedir="." default="copyfiles" >
+    <description>
+        Copies NDK (JNI) native executables to the assets folder.
+    </description>
+
+    <!-- set global properties for this build -->
+    <property name="libs.dir" location="libs/armeabi" />
+    <property name="templates.dir" location="jni/tinyproxy/data/templates" />
+    <property name="dst.dir" location="res/raw" />
+    <property name="assets.dir" location="assets" />
+    
+    <!-- targets hereafter -->
+    <target name="init" >
+        <!-- Create the time stamp -->
+        <tstamp />
+        <!-- Create the build directory structure used by compile -->
+        <mkdir dir="${dst.dir}" />
+        <mkdir dir="${assets.dir}" />
+    </target>
+
+    <target name="copyfiles" depends="init" description="copy the native executables" >
+        <copy todir="${dst.dir}" >
+            <fileset dir="${libs.dir}" >
+                <include name="dnsmasq" />
+                <include name="scripter" />
+                <include name="tinyproxy" />
+                <include name="polipo" />
+                </fileset>
+        </copy>
+        <copy todir="${assets.dir}" >
+            <fileset dir="${templates.dir}" >
+                <include name="**/*.html" />
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="clean" description="clean up" >
+        <!-- Delete the native executables from ${dst.dir} -->
+        <delete>
+            <fileset dir="${dst.dir}" >
+                <include name="**/*" />
+                <exclude name="**/*.so" />
+                <exclude name="**/*.jar" />
+            </fileset>
+        </delete>
+    </target>
+</project>
