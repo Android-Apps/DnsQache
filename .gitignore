@@ -1,14 +1,11 @@
 # For reference, see https://github.com/github/gitignore/blob/master/Global/Eclipse.gitignore
-# uninteresting directories
-bin
-gen
-libs
-
-# files
 *.pydevproject
 .project
 .metadata
 bin/**
+gen/**
+libs/**
+obj/**
 tmp/**
 tmp/**/*
 *.tmp
