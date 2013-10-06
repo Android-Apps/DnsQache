@@ -16,7 +16,7 @@ import com.tdhite.dnsqache.R;
 
 public class ConfigManager
 {
-	private static final String TAG = "DNSQACHE -> ConfigManager";
+	public static final String TAG = "DNSQACHE -> ConfigManager";
 
 	// the disparate configuration maps
 	private HashMap<String, HashMap<String, String>> mConfigMaps =
@@ -61,8 +61,9 @@ public class ConfigManager
 
 	public static final String PREF_UI_DNS_PROVIDER_POSITION = "dns.providerPosition";
 	public static final String PREF_UI_DNS_LOG_QUERIES = "dnsmasq.logQueries";
+	public static final String PREF_DNS_PROVIDER = "dns.provider";
 
-	public static final String PREF_UI_PROXY_SPINNER_POSITION = "proxy.pisition";
+	public static final String PREF_UI_PROXY_SPINNER_POSITION = "proxy.position";
 
 	public static final String DNSMASQ_BINARY = "dnsqache";
 

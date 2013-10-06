@@ -29,8 +29,6 @@ public class ViewLogActivity extends Activity {
 		setWebViewContent(webView);
 	}
 
-	public static final String MSG_TAG = "TETHER -> AccessControlActivity";
-
 	private static final String HTML_HEADER = "<html><head><title>background-color</title> "
 			+ "<style type=\"text/css\"> "
 			+ "body { background-color:#181818; font-family:Arial; font-size:100%; color: #ffffff } "
@@ -43,7 +41,9 @@ public class ViewLogActivity extends Activity {
 
 	private void setWebViewContent(WebView webView) {
 		QacheService svc = QacheService.getSingleton();
-		svc.generateLogFile();
+		if (svc != null) {
+			svc.generateLogFile();
+		}
 		webView.loadDataWithBaseURL("fake://fakeme",
 				HTML_HEADER + this.readLogfile() + HTML_FOOTER, "text/html",
 				"UTF-8", "fake://fakeme");

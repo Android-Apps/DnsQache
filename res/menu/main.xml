@@ -3,9 +3,9 @@
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
-        android:showAsAction="never"
         android:title="@string/action_settings"/>
-    <item android:id="@+id/action_view_log" android:title="@string/menu_view_log"></item>
+    <item android:id="@+id/action_configure" android:title="@string/configure"></item><item android:id="@+id/action_view_log" android:title="@string/menu_view_log"></item>
     <item android:id="@+id/action_about" android:title="@string/menu_about"></item>
+    
 
 </menu>

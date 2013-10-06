@@ -12,9 +12,14 @@
         -->
     </style>
 
-    <!-- Application theme. -->
+    <!-- Application theme -->
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
-
+    
+    <!-- Alert Dialog theme -->
+	<style name="AlertDialogTheme" parent="android:Theme.Dialog">
+	    <item name="android:textSize">18sp</item>
+	</style>
+    
 </resources>

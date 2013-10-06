@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">DnsQache</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Settings: Proxy</string>
     <string name="text_name_servers">Domain Name Servers</string>
     <string name="default_name_server1">220.67.222.222</string>
     <string name="default_name_server2">220.67.220.220</string>
@@ -19,6 +18,69 @@
     <string name="default_cache_size">1000</string>
     <string name="btn_activateonboot">Activate DnsQache on boot</string>
 
+    <string name="property_dnsmasq_bind_interfaces">bind-interfaces</string>
+    <string name="btn_log_queries">Log DNS Queries</string>
+    <string name="menu_view_log">View Log</string>
+    <string name="menu_about">About</string>
+    <string name="title_activity_view_log">ViewLogActivity</string>
+    <string name="log_activity_filenotfound">The log file does not (yet) exist.</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="text_qache_start">Click below to start the qache:</string>
+    <string name="text_qache_stop">Click below to stop the qache.</string>
+    <string name="text_empty"></string>
+    <string name="text_no_proxy">No Proxy</string>
+    <string name="text_proxy_polipo">Polipo</string>
+    <string name="text_proxy_tinyproxy">TinyProxy</string>
+    <string name="text_proxy_selection">Proxy</string>
+    <string name="prompt_spinner_proxy_type">Select a Local Proxy App</string>
+    <string name="res_array_proxy_apps">array_proxy_binaries</string>
+
+    <string name="active">active</string>
+    <string name="qache_active">Active</string>
+    <string name="state_inactive">Inactive</string>
+    
+    <string name="property_dnsmasq_primary">dns.primary</string>
+    <string name="property_dnsmasq_secondary">dns.secondary</string>
+    <string name="property_dnsmasq_cachesize">cache-size</string>
+    <string name="property_dnsmasq_interface">interface</string>
+    <string name="property_dnsmasq_dhcp_interface">no-dhcp-interface</string>
+    <string name="property_dnsmasq_user">user</string>
+    <string name="property_log_queries">log-queries</string>
+    <string name="property_resolv_file">resolv-file</string>
+    <string name="property_pid_file">pid-file</string>
+
+    <string name="default_dns_provider">OpenDNS</string>
+    <string name="default_activate_on_boot">false</string>
+    
+    <string name="local_ip_address_caching">Local IP Address Caching</string>
+    <string name="in_cache">In Cache:</string>
+    <string name="lookups">Lookups:</string>
+    <string name="checkmark">checkmark</string>
+    <string name="zero">0</string>
+    <string name="clear">Clear</string>
+    <string name="info">Info</string>
+    <string name="reset">Reset</string>
+    <string name="off">Off</string>
+    <string name="on">On</string>
+    <string name="configure">Settings: DNS</string>
+    <string name="empty"></string>
+    
+    <string name="textInfo1"><b>DnsQache</b> stores locally the IP addresses received from DNS servers to reduce network traffic and increase response time.</string>
+    <string name="textInfo2"><b>Off/On:</b> To start/stop operation.</string>
+    <string name="textInfo3"><b>Configure:</b> To change DNSQache settings.</string>
+    <string name="textInfo4"><b>Lookups:</b> Number of successful lookups for cached IP addresses.</string>
+    <string name="textInfo5"><b>In Cache:</b> Number of IP addresses currently stored by DnsQache.</string>
+    
+    <string name="clearMsg">This will clear the local cache and reset the counters.</string>
+    <string name="resetMsg">This will set the configuration to the default settings.</string>
+    
+    <string name="dnsqache_configuration">Configuration Settings</string>
+    <string name="cache_size">Cache Size</string>
+    <string name="domain_name_server">Domain Name Server</string>
+    <string name="dns_primary">Primary</string>
+    <string name="dns_secondary">Secondary</string>
+    <string name="activateonboot">Start DnsQache on boot</string>
+    
     <string-array name="array_dns_provider_names">
         <item>DNSAdvantage</item>
         <item>Google</item>
@@ -30,6 +92,7 @@
         <item>Verizon3</item>
         <item>Verizon4</item>
         <item>Verizon5</item>
+        <item>Other (specify IP address)</item>
     </string-array>
     <string-array name="DNSAdvantage">
         <item>156.154.70.1</item>
@@ -84,22 +147,9 @@
         <item>tinyproxy</item>
         </string-array>
 
-    <string name="property_dnsmasq_bind_interfaces">bind-interfaces</string>
-    <string name="btn_log_queries">Log DNS Queries</string>
-    <string name="menu_view_log">View Log</string>
-    <string name="menu_about">About</string>
-    <string name="title_activity_view_log">ViewLogActivity</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="log_activity_filenotfound">The log file does not (yet) exist.</string>
-    <string name="title_activity_settings">SettingsActivity</string>
-    <string name="text_qache_start">Click below to start the qache:</string>
-    <string name="text_qache_stop">Click below to stop the qache.</string>
-    <string name="text_empty"></string>
-    <string name="text_no_proxy">No Proxy</string>
-    <string name="text_proxy_polipo">Polipo</string>
-    <string name="text_proxy_tinyproxy">TinyProxy</string>
-    <string name="text_proxy_selection">Proxy</string>
-    <string name="prompt_spinner_proxy_type">Select a Local Proxy App</string>
-    <string name="res_array_proxy_apps">array_proxy_binaries</string>
-    
+    <string name="title_activity_configuration">ConfigurationActivity</string>
+    <string name="title_activity_configure">ConfigureActivity</string>
+    <string name="default_log_queries">false</string>
+    <string name="proxy_configuration">Proxy Configuration Settings</string>
+
 </resources>

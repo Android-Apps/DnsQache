@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	 <color name="defaultText">#222</color>
+	 <color name="dkGrayText">#555</color>
+	 <color name="ltGrayText">#888</color>
+	 <color name="disabledText">#aaa</color>
+	 <color name="greenText">#008000</color>
+	 <color name="groupBkgnd">#e8ebef</color>
+     <color name="infoBorder">#ccc</color>	 
+	 <color name="white">#fff</color>
+	 <color name="black">#000</color>
+</resources>

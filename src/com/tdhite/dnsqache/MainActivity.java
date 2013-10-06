@@ -50,6 +50,13 @@ public class MainActivity extends Activity
 		textView.setText(text);
 	}
 
+    private boolean openConfigureActivity()
+    {
+        Intent intent = new Intent(this, ConfigureActivity.class);
+        startActivity(intent);
+		return true;
+    }
+
 	private boolean openSettingsActivity()
 	{
 		Intent intent = new Intent(this, SettingsActivity.class);
@@ -64,7 +71,7 @@ public class MainActivity extends Activity
 		return true;
 	}
 
-	private void startQache()
+    private void startQache()
 	{
 		Intent intent = new Intent();
 		intent.setClass(this, QacheService.class);
@@ -100,6 +107,9 @@ public class MainActivity extends Activity
 
 		// Handle item selection
 	    switch (item.getItemId()) {
+	        case R.id.action_configure:
+	        	handled = this.openConfigureActivity();
+	        	break;
 	        case R.id.action_settings:
 	        	handled = this.openSettingsActivity();
 	        	break;

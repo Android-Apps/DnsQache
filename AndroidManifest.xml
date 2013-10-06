@@ -56,6 +56,15 @@
             android:name="com.tdhite.dnsqache.SettingsActivity"
             android:label="@string/title_activity_settings" >
         </activity>
+        <activity
+            android:name="com.tdhite.dnsqache.ConfigureActivity"
+            android:label="@string/title_activity_configure"
+            android:parentActivityName="com.tdhite.dnsqache.MainActivity" 
+            android:windowSoftInputMode="stateHidden" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.tdhite.dnsqache.MainActivity" />
+        </activity>
     </application>
 
 </manifest>
