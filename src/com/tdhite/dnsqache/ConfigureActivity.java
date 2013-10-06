@@ -31,13 +31,6 @@ public class ConfigureActivity extends Activity implements OnItemSelectedListene
     // other constants
     public static final String TAG = "DNSQACHE -> MainActivity";
 
-    // data storage keys (for state caching)
-//    private static final String KEY_CACHE_SIZE       = "cacheSize";
-//    private static final String KEY_DNS_PROVIDER     = "dnsProvider";
-//    private static final String KEY_DNS1             = "dns1";
-//    private static final String KEY_DNS2             = "dns2";
-//    private static final String KEY_ACTIVATE_ON_BOOT = "activateOnBoot";
-
     // activity initialization
     private boolean mInitialized = false;
 
@@ -80,6 +73,7 @@ public class ConfigureActivity extends Activity implements OnItemSelectedListene
             initializeCacheSize();
             initializeDNSProvider();
             initializeActivateOnBoot();
+            initializeLogQueries();
 
             // activity is initialized
             mInitialized = true;
@@ -371,6 +365,15 @@ public class ConfigureActivity extends Activity implements OnItemSelectedListene
     private void initializeActivateOnBoot()
     {
         setActivateOnBoot(prefs.getPrefActivateOnBoot());
+    }
+
+    /**
+     * Initialize the LOG QUERIES checkbox to
+     * the preference setting.
+     */
+    private void initializeLogQueries()
+    {
+        setLogQueries(prefs.getPrefLogQueries());
     }
 
     /**

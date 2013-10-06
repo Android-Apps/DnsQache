@@ -130,13 +130,14 @@ public class Preferences
 	{
 		SharedPreferences.Editor prefsEditor = getPrefsEditor();
 		prefsEditor.putBoolean(
-				ConfigManager.PREF_DNSMASQ_LOG_QUERIES, logQueries);
+				ConfigManager.PREF_UI_DNS_LOG_QUERIES, logQueries);
+		prefsEditor.commit();
 	}
 
 	public boolean getPrefLogQueries()
 	{
 		return getPrefs().getBoolean(
-				ConfigManager.PREF_DNSMASQ_LOG_QUERIES,
+				ConfigManager.PREF_UI_DNS_LOG_QUERIES,
 				Boolean.valueOf(ctx.getResources().getString(
 						R.string.default_log_queries)));
 	}
