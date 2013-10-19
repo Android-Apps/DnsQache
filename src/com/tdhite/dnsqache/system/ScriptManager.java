@@ -52,8 +52,9 @@ public class ScriptManager
 
 	private void generateStartScript()
 	{
-		String script = "run \""
-				+ mConfigManager.getBinaryFullPath(ConfigManager.DNSMASQ_BINARY)
+		String script ="run killall dnsqache\n"
+				+ "run rm -f \"" + mConfigManager.getDnsmasqPidFile() + "\"\n"
+				+ "run \"" + mConfigManager.getBinaryFullPath(ConfigManager.DNSMASQ_BINARY)
 				+ "\" \"--conf-file=" + mConfigManager.getDnsqacheConfigFile()
 				+ "\"\nsetprop \"dnsqache.status\" running\nrun chmod 644 \""
 				+ mConfigManager.getLogFile() + "\"\n";
@@ -109,11 +110,13 @@ public class ScriptManager
 
 	private void generateStartTinyProxyScript()
 	{
-		String script = "run \""
-				+ mConfigManager.getBinaryFullPath(ConfigManager.TINYPROXY_BINARY)
+		String script = "run killall tinyproxy\n"
+				+ "run rm -f \"" + mConfigManager.getTinyProxyLogFile() + "\"\n"
+				+ "run rm -f \"" + mConfigManager.getTinyProxyPidFile() + "\"\n"
+				+ "run \"" + mConfigManager.getBinaryFullPath(ConfigManager.TINYPROXY_BINARY)
 				+ "\" \"-c " + mConfigManager.getTinyProxyConfigFile()
-				+ "\"\nrun chmod 644 \""
-				+ mConfigManager.getTinyProxyLogFile() + "\"\n";
+				+ "\"\nrun chmod 644 \"" + mConfigManager.getTinyProxyLogFile()
+				+ "\"\nsetprop \"proxyqache.status\" running\n";
 		CoreTask.writeLinesToFile(
 				mConfigManager.getScriptFullPath(ScriptManager.SCRIPT_STARTTINYPROXY),
 				script);
@@ -132,12 +135,14 @@ public class ScriptManager
 
 	private void generateStartPolipoScript()
 	{
-		String script = "run \""
-				+ mConfigManager.getBinaryFullPath(ConfigManager.POLIPO_BINARY)
-				+ "\" \"-c " + mConfigManager.getPolipoConfigFile() + "\"\n";
-		CoreTask.writeLinesToFile(
-				mConfigManager.getScriptFullPath(ScriptManager.SCRIPT_STARTPOLIPO),
-				script);
+		String script = "run killall polipo\n"
+				+ "run rm -f \"" + mConfigManager.getPolipoLogFile() + "\"\n"
+				+ "run rm -f \"" + mConfigManager.getPolipoPidFile() + "\"\n"
+				+ "run \"" + mConfigManager.getBinaryFullPath(ConfigManager.POLIPO_BINARY)
+				+ "\" \"-c " + mConfigManager.getPolipoConfigFile()
+				+ "\"\nsetprop \"proxyqache.status\" running\n";
+		CoreTask.writeLinesToFile(mConfigManager
+				.getScriptFullPath(ScriptManager.SCRIPT_STARTPOLIPO), script);
 	}
 
 	private void generateStopPolipoScript()
