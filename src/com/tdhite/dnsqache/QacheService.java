@@ -103,10 +103,56 @@ public class QacheService extends Service
 		return mSingleton;
 	}
 
-	public static boolean isActive()
+	public static boolean isDnsQacheActive()
 	{
+		boolean bActive = false;
+
+		try
+		{
+			QacheService _this = QacheService.getSingleton();
+			if (_this != null)
+			{
+				String dnsqache = _this.mQacheApplication.getConfigManager()
+						.getBinaryFullPath(ConfigManager.DNSMASQ_BINARY);
+				bActive = CoreTask.isProcessRunning(dnsqache);
+			}
+		}
+		catch (Exception e)
+		{
+			Log.e(TAG, "Exception occurred when checking for DnsQache binary",
+					e);
+			bActive = false;
+		}
+
 		String qacheStatus = CoreTask.getProp(ANDROID_STATUS);
-		return (qacheStatus.equals("running"));
+		return bActive && (qacheStatus.equals("running"));
+	}
+
+	public static boolean isProxyActive()
+	{
+		boolean bActive = false;
+
+		try
+		{
+			QacheService _this = QacheService.getSingleton();
+			if (_this != null)
+			{
+				String polipo = _this.mQacheApplication.getConfigManager()
+						.getBinaryFullPath(ConfigManager.POLIPO_BINARY);
+				String tinyproxy = _this.mQacheApplication.getConfigManager()
+						.getBinaryFullPath(ConfigManager.TINYPROXY_BINARY);
+				bActive = CoreTask.isProcessRunning(polipo)
+						|| CoreTask.isProcessRunning(tinyproxy);
+			}
+		}
+		catch (Exception e)
+		{
+			Log.w(TAG, "Exception occurred when checking for DnsQache binary",
+					e);
+		}
+
+		String qacheStatus = CoreTask.getProp(ANDROID_STATUS);
+		return bActive && (qacheStatus.equals("running"));
 	}
 
 	/*************************************************************************
@@ -571,7 +617,7 @@ public class QacheService extends Service
 
 		// Initialize the script manager
 		mScripter = new ScriptManager(mQacheApplication.getConfigManager());
-		mScripter.generateScripts();
+		mScripter.generateScripts(mQacheApplication.getConfigManager());
 
 		// Init timeStampCounterUpdate
 		mTimestampCounterUpdate = System.currentTimeMillis();

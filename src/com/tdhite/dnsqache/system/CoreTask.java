@@ -18,7 +18,7 @@ public class CoreTask
 {
 	public static final String TAG = "DNSQACHE -> CoreTask";
 
-	private Hashtable<String, String> runningProcesses = new Hashtable<String, String>();
+	private static Hashtable<String, String> runningProcesses = new Hashtable<String, String>();
 
 	/*************************************************************************
 	 * Static methods
@@ -194,7 +194,7 @@ public class CoreTask
 		return file.lastModified();
 	}
 
-	public boolean isProcessRunning(String processName) throws Exception
+	static public boolean isProcessRunning(String processName) throws Exception
 	{
 		boolean processIsRunning = false;
 		Hashtable<String, String> tmpRunningProcesses = new Hashtable<String, String>();
@@ -215,40 +215,44 @@ public class CoreTask
 			}
 		};
 
-		File[] processes = procDir.listFiles(filter);
-		for (File process : processes)
+		synchronized(CoreTask.runningProcesses)
 		{
-			String cmdLine = "";
-
-			// Chef for a known know process
-			if (this.runningProcesses.containsKey(process.getAbsoluteFile()
-					.toString()))
+			File[] processes = procDir.listFiles(filter);
+			for (File process : processes)
 			{
-				cmdLine = this.runningProcesses.get(process.getAbsoluteFile()
-						.toString());
-			}
-			else
-			{
-				ArrayList<String> cmdlineContent = CoreTask
-						.readLinesFromFile(process.getAbsoluteFile()
-								+ "/cmdline");
-				if (cmdlineContent != null && cmdlineContent.size() > 0)
+				String cmdLine = "";
+	
+				// Search for a known known process
+				if (CoreTask.runningProcesses.containsKey(process.getAbsoluteFile()
+						.toString()))
 				{
-					cmdLine = cmdlineContent.get(0);
+					cmdLine = CoreTask.runningProcesses.get(process.getAbsoluteFile()
+							.toString());
+				}
+				else
+				{
+					ArrayList<String> cmdlineContent = CoreTask
+							.readLinesFromFile(process.getAbsoluteFile()
+									+ "/cmdline");
+					if (cmdlineContent != null && cmdlineContent.size() > 0)
+					{
+						cmdLine = cmdlineContent.get(0);
+					}
+				}
+				// Adding to tmp-Hashtable
+				tmpRunningProcesses.put(process.getAbsoluteFile().toString(),
+						cmdLine);
+	
+				// Checking if processName matches
+				if (cmdLine.startsWith(processName))
+				{
+					processIsRunning = true;
 				}
 			}
-			// Adding to tmp-Hashtable
-			tmpRunningProcesses.put(process.getAbsoluteFile().toString(),
-					cmdLine);
-
-			// Checking if processName matches
-			if (cmdLine.contains(processName))
-			{
-				processIsRunning = true;
-			}
+	
+			// Overwriting runningProcesses
+			CoreTask.runningProcesses = tmpRunningProcesses;
 		}
-		// Overwriting runningProcesses
-		this.runningProcesses = tmpRunningProcesses;
 
 		return processIsRunning;
 	}

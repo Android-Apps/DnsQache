@@ -1,5 +1,6 @@
 package com.tdhite.dnsqache.system;
 
+import android.os.Build;
 import android.util.Log;
 
 public class ScriptManager
@@ -50,27 +51,60 @@ public class ScriptManager
 		return asRoot ? CoreTask.runRootCommand(script) : CoreTask.runStandardCommand(script); 
 	}
 
-	private void generateStartScript()
+	private void generateStartScript(ConfigManager config)
 	{
-		String script = "run \""
-				+ mConfigManager.getBinaryFullPath(ConfigManager.DNSMASQ_BINARY)
-				+ "\" \"--conf-file=" + mConfigManager.getDnsqacheConfigFile()
-				+ "\"\nsetprop \"dnsqache.status\" running\nrun chmod 644 \""
-				+ mConfigManager.getLogFile() + "\"\n";
+		String dnsServers[] = config.getDNSServers();
+
+		StringBuilder script = new StringBuilder();
+		script.append("run killall dnsqache\n");
+		script.append("run rm -f \"");
+			script.append(mConfigManager.getDnsmasqPidFile());
+			script.append("\"\n");
+		script.append("run \"");
+			script.append(mConfigManager.getBinaryFullPath(ConfigManager.DNSMASQ_BINARY));
+			script.append("\" \"--conf-file=");
+			script.append(mConfigManager.getDnsqacheConfigFile());
+			script.append("\"\n");
+		script.append("setprop \"dnsqache.status\" running\nrun chmod 644 \"");
+			script.append(mConfigManager.getLogFile());
+			script.append("\"\n");
+
+		if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+		{
+				script.append("run iptables \"-t\" nat \"-N\" dnsqache\n");
+				for (String dnsServer : dnsServers)
+				{
+					if (dnsServer != null && dnsServer.length() > 0) {
+						script.append("run iptables \"-t\" nat \"-A\" dnsqache \"-p\" udp \"--dport\" \"53\" \"!\" \"--destination\" \"");
+							script.append(dnsServer);
+							script.append("\" \"-j\" DNAT \"--to-destination\" \"127.0.0.1:53\"\n");
+					}
+				}
+				script.append("run iptables \"-t\" nat \"-I\" OUTPUT \"-j\" dnsqache\n");
+		}
 		CoreTask.writeLinesToFile(
 				mConfigManager.getScriptFullPath(ScriptManager.SCRIPT_STARTQACHE),
-				script);
+				script.toString());
 	}
 
 	private void generateStopScript()
 	{
-		String script = "killbypidfile TERM \""
-				+ mConfigManager.getDnsmasqPidFile()
-				+ "\"\nsetprop \"dnsqache.status\" stopped\n";
+		StringBuilder script = new StringBuilder();
+		
+		script.append("killbypidfile TERM \"");
+		script.append(mConfigManager.getDnsmasqPidFile());
+		script.append("\"\nsetprop \"dnsqache.status\" stopped\n");
+
+		if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+		{
+			script.append("run iptables \"-t\" nat \"-D\" OUTPUT \"1\"\n");
+			script.append("run iptables \"-t\" nat \"-F\" dnsqache\n");
+			script.append("run iptables \"-t\" nat \"-X\" dnsqache\n");
+		}
 
 		CoreTask.writeLinesToFile(
 				mConfigManager.getScriptFullPath(ScriptManager.SCRIPT_STOPQACHE),
-				script);
+				script.toString());
 	}
 
 	private void generateSetDnsScript()
@@ -109,11 +143,13 @@ public class ScriptManager
 
 	private void generateStartTinyProxyScript()
 	{
-		String script = "run \""
-				+ mConfigManager.getBinaryFullPath(ConfigManager.TINYPROXY_BINARY)
+		String script = "run killall tinyproxy\n"
+				+ "run rm -f \"" + mConfigManager.getTinyProxyLogFile() + "\"\n"
+				+ "run rm -f \"" + mConfigManager.getTinyProxyPidFile() + "\"\n"
+				+ "run \"" + mConfigManager.getBinaryFullPath(ConfigManager.TINYPROXY_BINARY)
 				+ "\" \"-c " + mConfigManager.getTinyProxyConfigFile()
-				+ "\"\nrun chmod 644 \""
-				+ mConfigManager.getTinyProxyLogFile() + "\"\n";
+				+ "\"\nrun chmod 644 \"" + mConfigManager.getTinyProxyLogFile()
+				+ "\"\nsetprop \"proxyqache.status\" running\n";
 		CoreTask.writeLinesToFile(
 				mConfigManager.getScriptFullPath(ScriptManager.SCRIPT_STARTTINYPROXY),
 				script);
@@ -132,12 +168,14 @@ public class ScriptManager
 
 	private void generateStartPolipoScript()
 	{
-		String script = "run \""
-				+ mConfigManager.getBinaryFullPath(ConfigManager.POLIPO_BINARY)
-				+ "\" \"-c " + mConfigManager.getPolipoConfigFile() + "\"\n";
-		CoreTask.writeLinesToFile(
-				mConfigManager.getScriptFullPath(ScriptManager.SCRIPT_STARTPOLIPO),
-				script);
+		String script = "run killall polipo\n"
+				+ "run rm -f \"" + mConfigManager.getPolipoLogFile() + "\"\n"
+				+ "run rm -f \"" + mConfigManager.getPolipoPidFile() + "\"\n"
+				+ "run \"" + mConfigManager.getBinaryFullPath(ConfigManager.POLIPO_BINARY)
+				+ "\" \"-c " + mConfigManager.getPolipoConfigFile()
+				+ "\"\nsetprop \"proxyqache.status\" running\n";
+		CoreTask.writeLinesToFile(mConfigManager
+				.getScriptFullPath(ScriptManager.SCRIPT_STARTPOLIPO), script);
 	}
 
 	private void generateStopPolipoScript()
@@ -151,9 +189,9 @@ public class ScriptManager
 				script);
 	}
 
-	public void generateScripts()
+	public void generateScripts(ConfigManager configs)
 	{
-		this.generateStartScript();
+		this.generateStartScript(configs);
 		this.generateStopScript();
 		this.generateSetDnsScript();
 		this.generateRestartScript();

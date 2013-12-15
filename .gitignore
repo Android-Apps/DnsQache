@@ -1,6 +1,5 @@
 # For reference, see https://github.com/github/gitignore/blob/master/Global/Eclipse.gitignore
 *.pydevproject
-.project
 .metadata
 bin/**
 gen/**
@@ -13,8 +12,9 @@ tmp/**/*
 *.swp
 *~.nib
 local.properties
-.classpath
-.settings/
+#.classpath
+#.project
+#.settings/
 .loadpath
 
 # External tool builders

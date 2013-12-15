@@ -706,4 +706,14 @@ public class ConfigManager
 	{
 		return this.getVarDir() + POLIPO_BINARY + ".log";
 	}
+
+	public String[] getDNSServers()
+	{
+		HashMap<String, String> serverMap = this.getMap(MAP_DNSSERVER);
+		String dnsServers[] = new String[] {
+				serverMap.get(PREF_DNSMASQ_PRIMARY),
+				serverMap.get(PREF_DNSMASQ_SECONDARY)
+		};
+		return dnsServers;
+	}
 }

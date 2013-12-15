@@ -27,16 +27,17 @@ public class MainActivity extends Activity
 	{
 		if (focused && !mInitialized)
 		{
-			boolean active = QacheService.isActive();
+			boolean dnsActive = QacheService.isDnsQacheActive();
+			boolean proxyActive = QacheService.isProxyActive();
 
 			// Set the toggle button based on the system property
 			// dnsqache.status
 			ToggleButton btnActive = (ToggleButton) this
 					.findViewById(R.id.qache_active_button);
-			btnActive.setChecked(active);
+			btnActive.setChecked(dnsActive);
 
 			// set the text to reflect the next user action
-			setTextViewText(R.id.text_qache_start, active);
+			setTextViewText(R.id.text_qache_start, dnsActive);
 
 			mInitialized = true;
 		}
