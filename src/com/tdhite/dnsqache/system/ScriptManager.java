@@ -51,6 +51,14 @@ public class ScriptManager
 		return asRoot ? CoreTask.runRootCommand(script) : CoreTask.runStandardCommand(script); 
 	}
 
+	private void addAcceptRule(StringBuilder script, String dnsServer, String proto) {
+		script.append("run iptables \"-t\" nat \"-A\" dnsqache \"-p\" ");
+		script.append(proto);
+		script.append(" \"--dport\" \"53\" \"--destination\" \"");
+		script.append(dnsServer);
+		script.append("\" \"-j\" RETURN\n");
+	}
+
 	private void generateStartScript(ConfigManager config)
 	{
 		String dnsServers[] = config.getDNSServers();
@@ -75,11 +83,12 @@ public class ScriptManager
 				for (String dnsServer : dnsServers)
 				{
 					if (dnsServer != null && dnsServer.length() > 0) {
-						script.append("run iptables \"-t\" nat \"-A\" dnsqache \"-p\" udp \"--dport\" \"53\" \"!\" \"--destination\" \"");
-							script.append(dnsServer);
-							script.append("\" \"-j\" DNAT \"--to-destination\" \"127.0.0.1:53\"\n");
+						this.addAcceptRule(script, dnsServer, "tcp");
+						this.addAcceptRule(script, dnsServer, "udp");
 					}
 				}
+				script.append("run \"iptables -t nat -A dnsqache -p udp --dport 53 -j DNAT --to-destination 127.0.0.1:53\n");
+				script.append("run \"iptables -t nat -A dnsqache -p tcp --dport 53 -j DNAT --to-destination 127.0.0.1:53\n");
 				script.append("run iptables \"-t\" nat \"-I\" OUTPUT \"-j\" dnsqache\n");
 		}
 		CoreTask.writeLinesToFile(
