@@ -53,14 +53,14 @@ public class MainActivity extends Activity
 
     private boolean openConfigureActivity()
     {
-        Intent intent = new Intent(this, ConfigureActivity.class);
+        Intent intent = new Intent(this, ConfigureDNSActivity.class);
         startActivity(intent);
 		return true;
     }
 
 	private boolean openSettingsActivity()
 	{
-		Intent intent = new Intent(this, SettingsActivity.class);
+		Intent intent = new Intent(this, ConfigureProxyActivity.class);
 		startActivity(intent);
 		return true;
 	}

@@ -141,4 +141,19 @@ public class Preferences
 				Boolean.valueOf(ctx.getResources().getString(
 						R.string.default_log_queries)));
 	}
+
+	public String getPrefProxyCIDRs()
+	{
+		return getPrefs().getString(
+				ConfigManager.PREF_POLIPO_ALLOWED_CIDRS,
+				ctx.getResources().getString(R.string.default_polipo_cidrs));
+	}
+
+	public void setPrefPolipoCIDRs(String cidrs)
+	{
+		SharedPreferences.Editor prefsEditor = getPrefsEditor();
+
+		prefsEditor.putString(ConfigManager.PREF_POLIPO_ALLOWED_CIDRS, cidrs);
+		prefsEditor.commit();
+	}
 }

@@ -26,7 +26,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-public class ConfigureActivity extends Activity implements OnItemSelectedListener
+public class ConfigureDNSActivity extends Activity implements OnItemSelectedListener
 {
     // other constants
     public static final String TAG = "DNSQACHE -> MainActivity";
@@ -167,7 +167,7 @@ public class ConfigureActivity extends Activity implements OnItemSelectedListene
         String provider = (String)parent.getSelectedItem();
         int providerId = getProviderId(provider);
         ViewGroup group = (ViewGroup)findViewById(R.id.group_name_servers);
-        EditText editText1 = (EditText)findViewById(R.id.name_server_1);
+        EditText editText1 = (EditText)findViewById(R.id.proxy_allowed_cidrs);
         EditText editText2 = (EditText)findViewById(R.id.name_server_2);
 
         if (providerId == 0)  // other (specify IP address)
@@ -272,7 +272,7 @@ public class ConfigureActivity extends Activity implements OnItemSelectedListene
     {
         EditText editCacheSize = (EditText)findViewById(R.id.edit_cache_size);
         Spinner  spinnerProvider = (Spinner)findViewById(R.id.spinner_dns_providers);
-        EditText editAddress1 = (EditText)findViewById(R.id.name_server_1);
+        EditText editAddress1 = (EditText)findViewById(R.id.proxy_allowed_cidrs);
         EditText editAddress2 = (EditText)findViewById(R.id.name_server_2);
         CheckBox checkActivateOnBoot = (CheckBox)findViewById(R.id.checkbox_activateonboot);
         CheckBox checkLogQueries = (CheckBox)findViewById(R.id.checkbox_log_queries);
@@ -468,7 +468,7 @@ public class ConfigureActivity extends Activity implements OnItemSelectedListene
         ((EditText)findViewById(R.id.edit_cache_size)).setText(cacheSize);
         ((EditText)findViewById(R.id.edit_cache_size)).setText(cacheSize);
         ((Spinner)findViewById(R.id.spinner_dns_providers)).setSelection(getDNSProviderPosition(provider));
-        ((EditText)findViewById(R.id.name_server_1)).setText(dns1);
+        ((EditText)findViewById(R.id.proxy_allowed_cidrs)).setText(dns1);
         ((EditText)findViewById(R.id.name_server_2)).setText(dns2);
         ((CheckBox)findViewById(R.id.checkbox_activateonboot)).setChecked(activateOnBoot);
         ((CheckBox)findViewById(R.id.checkbox_log_queries)).setChecked(logQueries);
@@ -483,7 +483,7 @@ public class ConfigureActivity extends Activity implements OnItemSelectedListene
     {
         EditText editCacheSize = (EditText)findViewById(R.id.edit_cache_size);
         Spinner  spinnerProvider = (Spinner)findViewById(R.id.spinner_dns_providers);
-        EditText editAddress1 = (EditText)findViewById(R.id.name_server_1);
+        EditText editAddress1 = (EditText)findViewById(R.id.proxy_allowed_cidrs);
         EditText editAddress2 = (EditText)findViewById(R.id.name_server_2);
         CheckBox checkActivateOnBoot = (CheckBox)findViewById(R.id.checkbox_activateonboot);
         CheckBox checkLogQueries = (CheckBox)findViewById(R.id.checkbox_log_queries);
@@ -538,7 +538,7 @@ public class ConfigureActivity extends Activity implements OnItemSelectedListene
         // reset the configuration
         ((EditText)findViewById(R.id.edit_cache_size)).setText(prefs.getPrefCacheSize());
         ((Spinner)findViewById(R.id.spinner_dns_providers)).setSelection(prefs.getPrefDNSProviderPosition());
-        ((EditText)findViewById(R.id.name_server_1)).setText(prefs.getPrefDNSAddress1());
+        ((EditText)findViewById(R.id.proxy_allowed_cidrs)).setText(prefs.getPrefDNSAddress1());
         ((EditText)findViewById(R.id.name_server_2)).setText(prefs.getPrefDNSAddress2());
         ((CheckBox)findViewById(R.id.checkbox_activateonboot)).setChecked(prefs.getPrefActivateOnBoot());
         ((CheckBox)findViewById(R.id.checkbox_log_queries)).setChecked(prefs.getPrefLogQueries());

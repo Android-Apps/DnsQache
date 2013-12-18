@@ -19,17 +19,20 @@ public class ConfigManager
 	public static final String TAG = "DNSQACHE -> ConfigManager";
 
 	// the disparate configuration maps
-	private HashMap<String, HashMap<String, String>> mConfigMaps =
-			new HashMap<String, HashMap<String, String>>();
-	
+	private HashMap<String, HashMap<String, String>> mConfigMaps = new HashMap<String, HashMap<String, String>>();
+
 	// SharedPreferences all live here
 	public static final String PREF_DONATE = "donatepref";
 	public static final String PREF_NOTIFICATION = "notificationpref";
 
-	public static final String MAP_TINYPROXY = "proxy";
-	public static final String MAP_DNSMASQ = "dnsmasq";
-	public static final String MAP_DNSSERVER = "dnsserver";
-	public static final String MAP_POLIPO = "polipo";
+	// Configuration maps in which to place final configuration information
+	private static final String MAP_TINYPROXY = "proxy";
+	private static final String MAP_DNSMASQ = "dnsmasq";
+	private static final String MAP_POLIPO = "polipo";
+	
+	// Configuration maps for use in specifying optional values that may change outside this class.
+	public static final String MAP_DNSMASQ_OPTS = "dnsmasq:opts";
+	public static final String MAP_POLIPO_OPTS = "polipo:opts";
 
 	public static final int DNS_DEFAULT_SPINNER_POSITION = 3;
 	public static final int PROXY_DEFAULT_SPINNER_POSITION = 0;
@@ -95,6 +98,8 @@ public class ConfigManager
 	/* polipo */
 	public static final String POLIPO_BINARY = "polipo";
 
+	public static final String PREF_POLIPO_ALLOWED_CIDRS = "allowed_cidrs";
+
 	/*
 	 * Where this application stores its data.
 	 */
@@ -115,12 +120,12 @@ public class ConfigManager
 		HashMap<String, String> map = this.mConfigMaps.get(mapName);
 		if (map == null)
 		{
-			map = new HashMap<String,String>();
+			map = new HashMap<String, String>();
 			this.mConfigMaps.put(mapName, map);
 		}
 		return map;
 	}
-	
+
 	private String quotedString(String inString)
 	{
 		StringBuilder s = new StringBuilder();
@@ -130,7 +135,8 @@ public class ConfigManager
 		return s.toString();
 	}
 
-	private boolean assureDirExists(String path, boolean bCreate) throws Exception
+	private boolean assureDirExists(String path, boolean bCreate)
+			throws Exception
 	{
 		File dir = new File(path);
 		boolean exists = dir.exists();
@@ -143,8 +149,8 @@ public class ConfigManager
 
 			if (!exists)
 			{
-				throw new Exception("Failed to create directory "
-						+ dir + " - cannot start!");
+				throw new Exception("Failed to create directory " + dir
+						+ " - cannot start!");
 			}
 		}
 
@@ -178,15 +184,16 @@ public class ConfigManager
 		File qacher = new File(this.getBinaryFullPath(DNSMASQ_BINARY));
 		File scripter = new File(
 				this.getBinaryFullPath(ScriptManager.SCRIPT_BINARY));
-		File tinyproxy = new File(
-				this.getBinaryFullPath(this.getBinaryFullPath(TINYPROXY_BINARY)));
-		File polipo = new File(
-				this.getBinaryFullPath(this.getBinaryFullPath(POLIPO_BINARY)));
-		return (qacher.exists() && scripter.exists() && tinyproxy.exists() && polipo.exists());
+		File tinyproxy = new File(this.getBinaryFullPath(this
+				.getBinaryFullPath(TINYPROXY_BINARY)));
+		File polipo = new File(this.getBinaryFullPath(this
+				.getBinaryFullPath(POLIPO_BINARY)));
+		return (qacher.exists() && scripter.exists() && tinyproxy.exists() && polipo
+				.exists());
 	}
 
-	private String copyFile(Context context,
-			String filename, String permission, int resource)
+	private String copyFile(Context context, String filename,
+			String permission, int resource)
 	{
 		String result = this.copyFile(context, filename, resource);
 		if (result != null)
@@ -276,7 +283,7 @@ public class ConfigManager
 
 				if (android.os.Build.VERSION.SDK_INT < 9)
 				{
-					 CoreTask.chmod(dstPath, "0644");
+					CoreTask.chmod(dstPath, "0644");
 				}
 				else
 				{
@@ -289,8 +296,8 @@ public class ConfigManager
 		return msg;
 	}
 
-	private boolean commitMap(Context context, String mapName,
-			String confFile, String separator)
+	private boolean commitMap(Context context, String mapName, String confFile,
+			String separator)
 	{
 		HashMap<String, String> map = this.getMap(mapName);
 		boolean ret = false;
@@ -326,9 +333,8 @@ public class ConfigManager
 		if (message == null)
 		{
 			message = this.copyFile(context,
-					this.getBinaryFullPath(
-							ScriptManager.SCRIPT_BINARY), "0755",
-					R.raw.scripter);
+					this.getBinaryFullPath(ScriptManager.SCRIPT_BINARY),
+					"0755", R.raw.scripter);
 		}
 
 		// dnsmasq
@@ -350,9 +356,9 @@ public class ConfigManager
 		// polipo
 		if (message == null)
 		{
-			message = this.copyFile(context,
-					this.getBinaryFullPath(POLIPO_BINARY), "0755",
-					R.raw.polipo);
+			message = this
+					.copyFile(context, this.getBinaryFullPath(POLIPO_BINARY),
+							"0755", R.raw.polipo);
 		}
 
 		StringBuilder path = new StringBuilder();
@@ -362,7 +368,8 @@ public class ConfigManager
 			path.append(this.getTinyProxyTemplateDir());
 			path.append("/");
 			path.append(mProxyHtmlFiles[idx]);
-			message = this.copyFileFromAssets(context, mProxyHtmlFiles[idx], path.toString());
+			message = this.copyFileFromAssets(context, mProxyHtmlFiles[idx],
+					path.toString());
 		}
 
 		if (message == null)
@@ -372,7 +379,7 @@ public class ConfigManager
 		}
 
 		// Log any messages to the display -- non-invasively.
-		//Toast.makeText(mApplication, message, Toast.LENGTH_LONG).show();
+		// Toast.makeText(mApplication, message, Toast.LENGTH_LONG).show();
 		Log.d(TAG, message);
 	}
 
@@ -380,11 +387,18 @@ public class ConfigManager
 	{
 		boolean bInitialized = mInitialized;
 
+		// Always set UI selectable items
+		HashMap<String, String> map = this.getMap(MAP_POLIPO);
+		HashMap<String, String> optsMap = this.getMap(MAP_POLIPO_OPTS);
+		StringBuilder cidr = new StringBuilder();
+		cidr.append("127.0.0.1, ");
+		cidr.append(optsMap.get(PREF_POLIPO_ALLOWED_CIDRS));
+		map.put("allowedClients", cidr.toString());
+
+		// add the rest if not already initialized
 		if (!bInitialized)
 		{
-			HashMap<String, String> map = this.getMap(MAP_POLIPO);
 			map.put("allowUnalignedRangeRequests", "false");
-			map.put("allowedClients", "127.0.0.1, 172.20.21.0/24, 172.20.22.0/22");
 			map.put("allowedPorts", "1-65535");
 			map.put("daemonise", "true");
 			map.put("disableVia", "true");
@@ -419,19 +433,23 @@ public class ConfigManager
 			HashMap<String, String> proxyMap = this.getMap(MAP_TINYPROXY);
 			proxyMap.put(PREF_TINYPROXY_PORT, PREF_TINYPROXY_DEFAULT_PORT);
 			proxyMap.put(PREF_TINYPROXY_TIMEOUT, PREF_TINYPROXY_DEFAULT_TIMEOUT);
-			proxyMap.put(PREF_TINYPROXY_DEFAULTERRORFILE, quotedString(this.getTinyProxyErrorFile()));
-			proxyMap.put(PREF_TINYPROXY_STATHOST, quotedString("tinyproxy.stats"));
-			proxyMap.put(PREF_TINYPROXY_LOGFILE, quotedString(this.getTinyProxyLogFile()));
+			proxyMap.put(PREF_TINYPROXY_DEFAULTERRORFILE,
+					quotedString(this.getTinyProxyErrorFile()));
+			proxyMap.put(PREF_TINYPROXY_STATHOST,
+					quotedString("tinyproxy.stats"));
+			proxyMap.put(PREF_TINYPROXY_LOGFILE,
+					quotedString(this.getTinyProxyLogFile()));
 			proxyMap.put(PREF_TINYPROXY_LOGLEVEL, "Connect");
-			proxyMap.put(PREF_TINYPROXY_PID_FILE, quotedString(this.getTinyProxyPidFile()));
+			proxyMap.put(PREF_TINYPROXY_PID_FILE,
+					quotedString(this.getTinyProxyPidFile()));
 			proxyMap.put(PREF_TINYPROXY_MAXCLIENTS, "100");
 			proxyMap.put(PREF_TINYPROXY_MINSPARESERVERS, "5");
 			proxyMap.put(PREF_TINYPROXY_MAXSPARESERVERS, "20");
 			proxyMap.put(PREF_TINYPROXY_STARTSERVERS, "10");
 			proxyMap.put(PREF_TINYPROXY_MAXREQUESTSPERCHILD, "0");
-//			proxyMap.put(PREF_TINYPROXY_ALLOW + "1", "127.0.0.1");
-//			proxyMap.put(PREF_TINYPROXY_ALLOW + "2", "172.16.0.12/12");
-//			proxyMap.put(PREF_TINYPROXY_ALLOW + "3", "192.168.0.0/16");
+			// proxyMap.put(PREF_TINYPROXY_ALLOW + "1", "127.0.0.1");
+			// proxyMap.put(PREF_TINYPROXY_ALLOW + "2", "172.16.0.12/12");
+			// proxyMap.put(PREF_TINYPROXY_ALLOW + "3", "192.168.0.0/16");
 			proxyMap.put(PREF_TINYPROXY_VIAPROXYNAME, quotedString("DnsQache"));
 			bInitialized = true;
 		}
@@ -445,9 +463,10 @@ public class ConfigManager
 		boolean bInitialized = mInitialized;
 
 		// in all cases, turn on or off specific UI options
-		SharedPreferences sharedPrefs =
-				PreferenceManager.getDefaultSharedPreferences(context);
-		boolean bLogQueries = sharedPrefs.getBoolean(PREF_UI_DNS_LOG_QUERIES, false);
+		SharedPreferences sharedPrefs = PreferenceManager
+				.getDefaultSharedPreferences(context);
+		boolean bLogQueries = sharedPrefs.getBoolean(PREF_UI_DNS_LOG_QUERIES,
+				false);
 		if (bLogQueries)
 		{
 			dnsmasqMap.put(PREF_DNSMASQ_LOG_QUERIES, null);
@@ -457,21 +476,21 @@ public class ConfigManager
 			dnsmasqMap.remove(PREF_DNSMASQ_LOG_QUERIES);
 		}
 
+		// dnsmasqMap.put(PREF_DNSMASQ_LOG_FACILITY,
+		// this.getLogFile());
+
 		// Add the rest
 		if (!bInitialized)
 		{
 			/* get the dnsmasq prefs table */
 			dnsmasqMap.put(PREF_DNSMASQ_INTERFACE, "lo");
-			dnsmasqMap.put(PREF_DNSMASQ_DHCP_INTERFACE,"lo");
+			dnsmasqMap.put(PREF_DNSMASQ_DHCP_INTERFACE, "lo");
 			dnsmasqMap.put(PREF_DNSMASQ_USER, "root");
-			dnsmasqMap.put(PREF_DNSMASQ_PID_FILE,
-					this.getDnsmasqPidFile());
+			dnsmasqMap.put(PREF_DNSMASQ_PID_FILE, this.getDnsmasqPidFile());
 			dnsmasqMap.put(PREF_DNSMASQ_RESOLV_FILE, this.getResolvFile());
 			dnsmasqMap.put(PREF_DNSMASQ_BIND_INTERFACES, null);
 			dnsmasqMap.put(PREF_DNSMASQ_TINYPROXY_DNSSEC, null);
 			dnsmasqMap.put(PREF_DNSMASQ_NEG_TTL, "3600");
-//			dnsmasqMap.put(PREF_DNSMASQ_LOG_FACILITY,
-//					this.getLogFile());
 			dnsmasqMap.put(PREF_DNSMASQ_NO_POLL, null);
 
 			// Check if binaries need updates
@@ -491,8 +510,8 @@ public class ConfigManager
 
 	private boolean writeResolvConf(String primary, String secondary)
 	{
-		String lines = "nameserver " + primary
-				+ "\nnameserver " + secondary + "\n";
+		String lines = "nameserver " + primary + "\nnameserver " + secondary
+				+ "\n";
 		return CoreTask.writeLinesToFile(this.getResolvFile(), lines);
 	}
 
@@ -535,10 +554,11 @@ public class ConfigManager
 		this.readConfigFile(context, MAP_DNSMASQ, filename, "=");
 
 		// in all cases, turn on or off specific UI options
-		SharedPreferences sharedPrefs =
-				PreferenceManager.getDefaultSharedPreferences(context);
+		SharedPreferences sharedPrefs = PreferenceManager
+				.getDefaultSharedPreferences(context);
 		HashMap<String, String> dnsmasqMap = this.getMap(MAP_DNSMASQ);
-		boolean bLogQueries = sharedPrefs.getBoolean(PREF_UI_DNS_LOG_QUERIES, false);
+		boolean bLogQueries = sharedPrefs.getBoolean(PREF_UI_DNS_LOG_QUERIES,
+				false);
 		if (bLogQueries)
 			dnsmasqMap.put(PREF_DNSMASQ_LOG_QUERIES, null);
 		else
@@ -567,8 +587,7 @@ public class ConfigManager
 	/*************************************************************************
 	 * Public methods
 	 ************************************************************************/
-	public void put(String mapName, String valueKey,
-			String value)
+	public void put(String mapName, String valueKey, String value)
 	{
 		HashMap<String, String> map = this.getMap(mapName);
 		map.put(valueKey, value);
@@ -607,7 +626,7 @@ public class ConfigManager
 
 	public boolean commit(Context context)
 	{
-		HashMap<String, String> serverMap = this.getMap(MAP_DNSSERVER);
+		HashMap<String, String> serverMap = this.getMap(MAP_DNSMASQ_OPTS);
 
 		// Initialize the maps
 		mInitialized = this.initializeDnsmasq(context)
@@ -709,11 +728,17 @@ public class ConfigManager
 
 	public String[] getDNSServers()
 	{
-		HashMap<String, String> serverMap = this.getMap(MAP_DNSSERVER);
-		String dnsServers[] = new String[] {
-				serverMap.get(PREF_DNSMASQ_PRIMARY),
-				serverMap.get(PREF_DNSMASQ_SECONDARY)
-		};
+		HashMap<String, String> serverMap = this.getMap(MAP_DNSMASQ_OPTS);
+		String dnsServers[] = new String[]
+			{
+					serverMap.get(PREF_DNSMASQ_PRIMARY),
+					serverMap.get(PREF_DNSMASQ_SECONDARY)
+			};
 		return dnsServers;
+	}
+
+	public HashMap<String, String> getOptionsMap(String mapName)
+	{
+		return this.getMap(mapName);
 	}
 }

@@ -79,7 +79,7 @@ public class QacheApplication extends Application
 		// the number seven is just because 1.1.1.1 is seven chars, eh?
 		if (primaryDns == null)
 		{
-			primaryDns = mConfigManager.get(ConfigManager.MAP_DNSSERVER,
+			primaryDns = mConfigManager.get(ConfigManager.MAP_DNSMASQ_OPTS,
 					ConfigManager.PREF_DNSMASQ_PRIMARY);
 			if (primaryDns == null || primaryDns.length() < 7)
 			{
@@ -91,7 +91,7 @@ public class QacheApplication extends Application
 
 		if (secondaryDns == null)
 		{
-			secondaryDns = mConfigManager.get(ConfigManager.MAP_DNSSERVER,
+			secondaryDns = mConfigManager.get(ConfigManager.MAP_DNSMASQ_OPTS,
 					ConfigManager.PREF_DNSMASQ_SECONDARY);
 			if (secondaryDns == null || secondaryDns.length() < 7)
 			{
@@ -104,7 +104,9 @@ public class QacheApplication extends Application
 		String dnsMaxCacheSize;
 		if (cacheSize <= 0)
 		{
-			dnsMaxCacheSize = ConfigManager.PREF_DNSMASQ_DEFAULT_CACHE_SIZE;
+			dnsMaxCacheSize = sharedPrefs.getString(
+				this.getString(R.string.property_dnsmasq_cachesize),
+				ConfigManager.PREF_DNSMASQ_DEFAULT_CACHE_SIZE);
 		}
 		else
 		{
@@ -112,11 +114,11 @@ public class QacheApplication extends Application
 		}
 
 		// put the values into the config manager
-		mConfigManager.put(ConfigManager.MAP_DNSSERVER,
+		mConfigManager.put(ConfigManager.MAP_DNSMASQ_OPTS,
 				ConfigManager.PREF_DNSMASQ_PRIMARY, primaryDns);
-		mConfigManager.put(ConfigManager.MAP_DNSSERVER,
+		mConfigManager.put(ConfigManager.MAP_DNSMASQ_OPTS,
 				ConfigManager.PREF_DNSMASQ_SECONDARY, secondaryDns);
-		mConfigManager.put(ConfigManager.MAP_DNSMASQ,
+		mConfigManager.put(ConfigManager.MAP_DNSMASQ_OPTS,
 				ConfigManager.PREF_DNSMASQ_CACHESIZE, dnsMaxCacheSize);
 
 		// put the values into shared preferences for others to read

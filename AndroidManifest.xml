@@ -4,7 +4,7 @@
     android:versionCode="1"
     android:versionName="1.0" >
 
-    <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="18" />
+    <uses-sdk android:minSdkVersion="9" android:targetSdkVersion="19" />
 
     <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -53,11 +53,11 @@
             android:label="@string/title_activity_view_log" >
         </activity>
         <activity
-            android:name="com.tdhite.dnsqache.SettingsActivity"
+            android:name="com.tdhite.dnsqache.ConfigureProxyActivity"
             android:label="@string/title_activity_settings" >
         </activity>
         <activity
-            android:name="com.tdhite.dnsqache.ConfigureActivity"
+            android:name="com.tdhite.dnsqache.ConfigureDNSActivity"
             android:label="@string/title_activity_configure"
             android:parentActivityName="com.tdhite.dnsqache.MainActivity" 
             android:windowSoftInputMode="stateHidden" >

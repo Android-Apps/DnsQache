@@ -81,6 +81,14 @@
     <string name="dns_secondary">Secondary</string>
     <string name="activateonboot">Start DnsQache on boot</string>
     
+    <string name="title_activity_configuration">ConfigurationActivity</string>
+    <string name="title_activity_configure">ConfigureActivity</string>
+    <string name="default_log_queries">false</string>
+    <string name="proxy_configuration">Proxy Configuration Settings</string>
+    <string name="default_polipo_cidrs">172.20.21.0/24</string>
+    <string name="text_allowed_cidrs">Allowed CIDRs</string>
+    <string name="btn_update_cidrs">Set Allowed CIDRs</string>
+
     <string-array name="array_dns_provider_names">
         <item>DNSAdvantage</item>
         <item>Google</item>
@@ -145,11 +153,6 @@
         <item>none</item>
         <item>polipo</item>
         <item>tinyproxy</item>
-        </string-array>
-
-    <string name="title_activity_configuration">ConfigurationActivity</string>
-    <string name="title_activity_configure">ConfigureActivity</string>
-    <string name="default_log_queries">false</string>
-    <string name="proxy_configuration">Proxy Configuration Settings</string>
+	 </string-array>
 
 </resources>

@@ -23,7 +23,6 @@ public class ViewLogActivity extends Activity {
 		webView.getSettings().setJavaScriptEnabled(false);
 		webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
 		webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(false);
-		webView.getSettings().setPluginsEnabled(false);
 		webView.getSettings().setSupportMultipleWindows(false);
 		webView.getSettings().setSupportZoom(false);
 		setWebViewContent(webView);
