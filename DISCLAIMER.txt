@@ -1,8 +1,13 @@
-This program is one that, as an application, enables the use of alternate DNS providers. Further, it optionally sets up a proxy using the great polipo or tinyproxy applications. For more information on the latter, please see http://www.pps.univ-paris-diderot.fr/~jch/software/polipo/ and https://banu.com/tinyproxy/).
+This program is one that, as an application, enables the use of alternate DNS
+providers. Further, it optionally sets up a proxy using the great polipo or
+tinyproxy applications. For more information on the latter, please see
+http://www.pps.univ-paris-diderot.fr/~jch/software/polipo/ and
+https://banu.com/tinyproxy/).
 
 *** Legal Disclaimer -- READ ALL OF THE FOLLOWING ***
 
-If you use the software, or convey it to someone else, you and all subsequent conveyees are bound by the following:
+If you use the software, or convey it to someone else, you and all subsequent
+conveyees are bound by the following:
 
 # This work is partially based on the work by Harry Mue and Sofia Lemons
 # (mailto: harald.mue@gmail.com) as it relates to Service management
@@ -43,22 +48,4 @@ If you use the software, or convey it to someone else, you and all subsequent co
 # BY YOU OR THIRD PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER
 # PROGRAMS), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGES.
-
-
-To use the program for just DNS caching and redirection, install and start the program. Thereafter, check the options in the "System|Settings: DNS" menu and tune to your liking.
-
-To use proxy services, the "System|Settings: Proxy" menu. Once saved, the options will take effect only after the service is (re)started. To restart, simply 'stop' and 'start' the DnsQache service. To do that, return to the main page of the app and the big 'DQ' will be either green or grey. If grey, it means the service is not currently running, so just touch the DQ to start it. If green (and you need to restart), just touch the DQ and give it time to shut down (goes grey) and touch it again (start).
-
-At first, it may be a goood idea to turn on 'Log Queries' in the DNS settings. That will allow you to view all DNS queries made by your phone and to endpoint to which the queries were redirected. To see those, you can use logcat (or an application that displays the same) or use the "System|View Log" menu, the latter of which will take a snapshot of the existing logcat log as it relates to dnamasq and present the information. If no log shows (e.g., the log says the log file is not available), then it means you did not turn on Log Queries and restart the service, or the service failed due to bad settings. The most common issue there is if you use custom IP addresses for the DNS name servers and dnsmasq ultimately fails to start due to such configuration error.
-
-As for Proxy use, the settings require that you to specify one or more CIDR ranges for client addresses allowed to connect to the proxy. The CIDRs of interest generally are the network addresses (e.g., 172.20.21.0/24) of your mobile hotspot (tether) network. You can view that in your phone settings, or the settings of your wifi-tether application. DnsQache sets the proxy connection port to 3128, so any client you want to proxy *must* set the proxy port to 3128. A later release will allow changing the port.
-
-Some Credits:
-The front page, and indeed the service layer code was inspired by, and to some extent, borrows from the venerable android-wifi-tether project originally authored by Harry Mue (mailto: harald.mue@gmail.com). While inspired obviously DnsQache is different in its nature and thus the code is quite different as a whole. Still -- reading and contributing to Harry's code was what got things rolling, so that body of work deserves significant mention, and that exists also in the sources.
-
-You should know how to, and have already, rooted your phone and get busybox operational on the same phone.
-
-Download Link
-
-Make a reserved post as well for changelogs.
 
