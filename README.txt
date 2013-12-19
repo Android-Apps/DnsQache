@@ -12,7 +12,7 @@ DISCLAIMER.txt file before committing to the use of this application.***
 
 Second, the author of this program would like to thank Harry Mue and Sofia
 Lemons for the fantastic Android Wifi Tether application for its use in both
-using that application andd and in learning Android. Some of the code in
+using that application and and in learning Android. Some of the code in
 DnsQache borrow from ideas and indeed implementation from Harry's and Sofia's
 code base, therefore this body of code carries his license and Copyright (duly
 noted in the DISCLAIMER.txt and the code, where appropriate).
@@ -51,23 +51,11 @@ For users of the fantastic Android Wifi Tether application
 (https://code.google.com/p/android-wifi-tether), the authors of that
 application, on Jul 18, 2013, merged in code fixes submitted by the author of
 this program that prevents the wifi-tether application from listening on the
-localhost interfact, which is required for DNS caching and not used by
+localhost interface, which is required for DNS caching and not used by
 wifi-tether. To assure you are using the version of code in which that 'fix'
 exists, you should be using wifi_tether_v3_4-experimental1.apk or higher (see
 https://code.google.com/p/android-wifi-tether/downloads/list). Tethered users
-gain the benefit of dns caching provided by DnsMasq.  The Proxy settings allow
-for the use of either polipo
-(http://www.pps.univ-paris-diderot.fr/~jch/software/polipo/) or tinyproxy
-(https://banu.com/tinyproxy/). Tinyproxy does not perform page caching, as does
-polipo, so the general preference ends up use of polipo.
-
-To use proxy services, the "System|Settings: Proxy" menu. Once saved, the
-options will take effect only after the service is (re)started. To restart,
-simply 'stop' and 'start' the DnsQache service. To do that, return to the main
-page of the app and the big 'DQ' will be either green or grey. If grey, it
-means the service is not currently running, so just touch the DQ to start it.
-If green (and you need to restart), just touch the DQ and give it time to shut
-down (goes grey) and touch it again (start).
+gain the benefit of dns caching and proxy services provided by DnsMasq.
 
 At first, it may be a goood idea to turn on 'Log Queries' in the DNS settings.
 That will allow you to view all DNS queries made by your phone and to endpoint
@@ -90,6 +78,19 @@ ROMs as hative hotspot or via the wifi-tether application. When DnsQache is
 active, custom DNS name servers and caching is automatically enabled for
 tethered users as well as the phone.
 
+To use proxy services, the "System|Settings: Proxy" menu. Once saved, the
+options will take effect only after the service is (re)started. To restart,
+simply 'stop' and 'start' the DnsQache service. To do that, return to the main
+page of the app and the big 'DQ' will be either green or grey. If grey, it
+means the service is not currently running, so just touch the DQ to start it.
+If green (and you need to restart), just touch the DQ and give it time to shut
+down (goes grey) and touch it again (start).
+
+The Proxy settings allow for the use of either polipo
+(http://www.pps.univ-paris-diderot.fr/~jch/software/polipo/) or tinyproxy
+(https://banu.com/tinyproxy/). Tinyproxy does not perform page caching, as does
+polipo, so the general preference ends up use of polipo.
+
 The settings require that you to specify one or more CIDR ranges for client
 addresses allowed to connect to the proxy. The CIDRs of interest generally are
 the network addresses (e.g., 172.20.21.0/24) of your mobile hotspot (tether)
@@ -111,8 +112,8 @@ though secured pages (HTTPS) should not end up cached.
 ** Some Credits: **
 The front page, and indeed the service layer code was inspired by, and to some
 extent, borrows from the venerable android-wifi-tether project originally
-authored by Harry Mue (mailto: harald.mue@gmail.com). While inspired obviously
-DnsQache is different in its nature and thus the code is quite different as a
-whole. Still -- reading and contributing to Harry's code was what got things
-rolling, so that body of work deserves significant mention, and that exists
-also in the sources.
+authored by Harry Mue (harald.mue@gmail.com) and Sofia Lemons. While inspired
+obviously DnsQache is different in its nature and thus the code is quite
+different as a whole. Still -- reading and contributing to Harry's code was
+what got things rolling, so that body of work deserves significant mention, and
+that exists also in the sources.
