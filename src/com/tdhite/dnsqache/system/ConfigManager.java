@@ -499,6 +499,16 @@ public class ConfigManager
 		// dnsmasqMap.put(PREF_DNSMASQ_LOG_FACILITY,
 		// this.getLogFile());
 
+		HashMap<String, String> optionsMap = this.getMap(MAP_DNSMASQ);
+		String maxCacheSize = optionsMap.get(PREF_DNSMASQ_CACHESIZE);
+		if (maxCacheSize == null)
+		{
+			maxCacheSize = sharedPrefs.getString(PREF_DNSMASQ_CACHESIZE,
+							PREF_DNSMASQ_DEFAULT_CACHE_SIZE);
+			optionsMap.put(PREF_DNSMASQ_CACHESIZE, maxCacheSize);
+		}
+		dnsmasqMap.put(PREF_DNSMASQ_CACHESIZE, maxCacheSize);
+
 		// Add the rest
 		if (!bInitialized)
 		{

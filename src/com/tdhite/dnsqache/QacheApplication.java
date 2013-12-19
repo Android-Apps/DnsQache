@@ -122,7 +122,7 @@ public class QacheApplication extends Application
 		}
 
 		String dnsMaxCacheSize;
-		if (cacheSize <= 0)
+		if (cacheSize < 0)
 		{
 			dnsMaxCacheSize = sharedPrefs.getString(
 				this.getString(R.string.property_dnsmasq_cachesize),
