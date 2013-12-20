@@ -124,9 +124,14 @@ public class QacheApplication extends Application
 		String dnsMaxCacheSize;
 		if (cacheSize < 0)
 		{
-			dnsMaxCacheSize = sharedPrefs.getString(
-				this.getString(R.string.property_dnsmasq_cachesize),
-				ConfigManager.PREF_DNSMASQ_DEFAULT_CACHE_SIZE);
+			dnsMaxCacheSize = mConfigManager.get(ConfigManager.MAP_DNSMASQ_OPTS,
+					ConfigManager.PREF_DNSMASQ_CACHESIZE);
+			if (secondaryDns == null)
+			{
+				dnsMaxCacheSize = sharedPrefs.getString(
+						this.getString(R.string.property_dnsmasq_cachesize),
+						ConfigManager.PREF_DNSMASQ_DEFAULT_CACHE_SIZE);
+			}
 		}
 		else
 		{
@@ -171,7 +176,7 @@ public class QacheApplication extends Application
 
 	public void updateDNSConfiguration()
 	{
-		this.updateDNSConfiguration(null, null, 0);
+		this.updateDNSConfiguration(null, null, -1);
 	}
 
 	// get preferences on whether donate-dialog should be displayed

@@ -166,7 +166,7 @@ public class Preferences
 	{
 		return getPrefs().getString(
 				ConfigManager.PREF_POLIPO_ALLOWED_CIDRS,
-				ctx.getResources().getString(R.string.default_polipo_cidrs));
+				ConfigManager.PREF_POLIPO_DEFAULT_ALLOWED_CIDRS);
 	}
 
 	public void setPrefPolipoCIDRs(String cidrs)

@@ -160,10 +160,11 @@ public class ScriptManager
 
 	private void generateStatsScript()
 	{
+		String logFile = mConfigManager.getLogFile();
 		String script = "killbypidfile USR1 \""
 				+ mConfigManager.getDnsmasqPidFile()
 				+ "\"\nrun \"logcat -d | grep dnsmasq >"
-				+ mConfigManager.getLogFile() + "\"\n";
+				+ logFile + "\"\nrun chmod 644 \"" + logFile + "\"\n";
 
 		CoreTask.writeLinesToFile(
 				mConfigManager.getScriptFullPath(ScriptManager.SCRIPT_STATS),

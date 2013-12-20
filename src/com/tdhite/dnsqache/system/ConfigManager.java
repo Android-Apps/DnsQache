@@ -117,8 +117,8 @@ public class ConfigManager
 
 	/* polipo */
 	public static final String POLIPO_BINARY = "polipo";
-
 	public static final String PREF_POLIPO_ALLOWED_CIDRS = "allowed_cidrs";
+	public static final String PREF_POLIPO_DEFAULT_ALLOWED_CIDRS = "172.20.21.0/24";
 
 	/*
 	 * Where this application stores its data.
@@ -407,13 +407,18 @@ public class ConfigManager
 	{
 		boolean bInitialized = mInitialized;
 
-		// Always set UI selectable items
+		// in all cases, turn on or off specific UI options
+		SharedPreferences sharedPrefs = PreferenceManager
+				.getDefaultSharedPreferences(context);
 		HashMap<String, String> map = this.getMap(MAP_POLIPO);
 		HashMap<String, String> optsMap = this.getMap(MAP_POLIPO_OPTS);
-		StringBuilder cidr = new StringBuilder();
-		cidr.append("127.0.0.1, ");
-		cidr.append(optsMap.get(PREF_POLIPO_ALLOWED_CIDRS));
-		map.put("allowedClients", cidr.toString());
+		String optCIDRs = optsMap.get(PREF_POLIPO_ALLOWED_CIDRS);
+		if (optCIDRs == null)
+		{
+			optCIDRs = sharedPrefs.getString(PREF_POLIPO_ALLOWED_CIDRS,
+					PREF_POLIPO_DEFAULT_ALLOWED_CIDRS);
+		}
+		map.put("allowedClients", "127.0.0.1, " + optCIDRs);
 
 		// add the rest if not already initialized
 		if (!bInitialized)
@@ -499,7 +504,7 @@ public class ConfigManager
 		// dnsmasqMap.put(PREF_DNSMASQ_LOG_FACILITY,
 		// this.getLogFile());
 
-		HashMap<String, String> optionsMap = this.getMap(MAP_DNSMASQ);
+		HashMap<String, String> optionsMap = this.getMap(MAP_DNSMASQ_OPTS);
 		String maxCacheSize = optionsMap.get(PREF_DNSMASQ_CACHESIZE);
 		if (maxCacheSize == null)
 		{

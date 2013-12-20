@@ -85,7 +85,6 @@
     <string name="title_activity_configure">ConfigureActivity</string>
     <string name="default_log_queries">false</string>
     <string name="proxy_configuration">Proxy Configuration Settings</string>
-    <string name="default_polipo_cidrs">172.20.21.0/24</string>
     <string name="text_allowed_cidrs">Allowed CIDRs</string>
     <string name="btn_update_cidrs">Set Allowed CIDRs</string>
 

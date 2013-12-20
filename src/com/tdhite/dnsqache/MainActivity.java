@@ -50,6 +50,9 @@ public class MainActivity extends Activity
 			boolean dnsActive = QacheService.isDnsQacheActive();
 			boolean proxyActive = QacheService.isProxyActive();
 
+			// TODO: Really need to integrate the use of proxyActive
+			// as a separate indicator -- users have commented already.
+
 			// Set the toggle button based on the system property
 			// dnsqache.status
 			ToggleButton btnActive = (ToggleButton) this

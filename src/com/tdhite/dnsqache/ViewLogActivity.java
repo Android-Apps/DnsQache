@@ -33,7 +33,6 @@ import android.webkit.WebView;
 public class ViewLogActivity extends Activity {
 	static public final String TAG = "DNSMASQ -> ViewLogActivity";
 
-	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
