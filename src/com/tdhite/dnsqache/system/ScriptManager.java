@@ -97,20 +97,22 @@ public class ScriptManager
 			script.append(mConfigManager.getLogFile());
 			script.append("\"\n");
 
-		if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+		script.append("run iptables \"-t\" nat \"-N\" dnsqache\n");
+		for (String dnsServer : dnsServers)
 		{
-				script.append("run iptables \"-t\" nat \"-N\" dnsqache\n");
-				for (String dnsServer : dnsServers)
-				{
-					if (dnsServer != null && dnsServer.length() > 0) {
-						this.addAcceptRule(script, dnsServer, "tcp");
-						this.addAcceptRule(script, dnsServer, "udp");
-					}
-				}
-				script.append("run \"iptables -t nat -A dnsqache -p udp --dport 53 -j DNAT --to-destination 127.0.0.1:53\n");
-				script.append("run \"iptables -t nat -A dnsqache -p tcp --dport 53 -j DNAT --to-destination 127.0.0.1:53\n");
-				script.append("run iptables \"-t\" nat \"-I\" OUTPUT \"-j\" dnsqache\n");
+			if (dnsServer != null && dnsServer.length() > 0) {
+				this.addAcceptRule(script, dnsServer, "tcp");
+				this.addAcceptRule(script, dnsServer, "udp");
+			}
 		}
+		script.append("run \"iptables -t nat -A dnsqache -p udp --dport 53 -j DNAT --to-destination 127.0.0.1:");
+		script.append(ConfigManager.PREF_DNSMASQ_DEFAULT_PORT);
+		script.append("\n");
+		script.append("run \"iptables -t nat -A dnsqache -p tcp --dport 53 -j DNAT --to-destination 127.0.0.1:");
+		script.append(ConfigManager.PREF_DNSMASQ_DEFAULT_PORT);
+		script.append("\n");
+		script.append("run iptables \"-t\" nat \"-I\" OUTPUT \"-j\" dnsqache\n");
+
 		CoreTask.writeLinesToFile(
 				mConfigManager.getScriptFullPath(ScriptManager.SCRIPT_STARTQACHE),
 				script.toString());

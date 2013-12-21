@@ -63,12 +63,14 @@ public class ConfigManager
 	public static final String PREF_DNSMASQ_CACHESIZE = "cache-size";
 	public static final String PREF_DNSMASQ_DEFAULT_PRIMARY_IP = "208.67.222.222";
 	public static final String PREF_DNSMASQ_DEFAULT_SECONDARY_IP = "208.67.220.220";
+	public static final String PREF_DNSMASQ_DEFAULT_PORT = "5353";
 	public static final String PREF_DNSMASQ_DEFAULT_CACHE_SIZE = "200";
 	public static final String PREF_DNSMASQ_NEG_TTL = "neg-ttl";
 
 	public static final String PREF_DNSMASQ_INTERFACE = "interface";
 	public static final String PREF_DNSMASQ_DHCP_INTERFACE = "no-dhcp-interface";
 	public static final String PREF_DNSMASQ_BIND_INTERFACES = "bind-interfaces";
+	public static final String PREF_DNSMASQ_PORT = "port";
 	public static final String PREF_DNSMASQ_USER = "user";
 	public static final String PREF_DNSMASQ_LOG_QUERIES = "log-queries";
 	public static final String PREF_DNSMASQ_RESOLV_FILE = "resolv-file";
@@ -521,6 +523,7 @@ public class ConfigManager
 			dnsmasqMap.put(PREF_DNSMASQ_INTERFACE, "lo");
 			dnsmasqMap.put(PREF_DNSMASQ_DHCP_INTERFACE, "lo");
 			dnsmasqMap.put(PREF_DNSMASQ_USER, "root");
+			dnsmasqMap.put(PREF_DNSMASQ_PORT, PREF_DNSMASQ_DEFAULT_PORT);
 			dnsmasqMap.put(PREF_DNSMASQ_PID_FILE, this.getDnsmasqPidFile());
 			dnsmasqMap.put(PREF_DNSMASQ_RESOLV_FILE, this.getResolvFile());
 			dnsmasqMap.put(PREF_DNSMASQ_BIND_INTERFACES, null);
