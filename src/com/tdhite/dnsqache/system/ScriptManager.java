@@ -20,7 +20,6 @@ Copyright (c) 2012-2013 Tom Hite
 
 package com.tdhite.dnsqache.system;
 
-import android.os.Build;
 import android.util.Log;
 
 public class ScriptManager
@@ -126,12 +125,9 @@ public class ScriptManager
 		script.append(mConfigManager.getDnsmasqPidFile());
 		script.append("\"\nsetprop \"dnsqache.status\" stopped\n");
 
-		if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
-		{
-			script.append("run iptables \"-t\" nat \"-D\" OUTPUT \"1\"\n");
-			script.append("run iptables \"-t\" nat \"-F\" dnsqache\n");
-			script.append("run iptables \"-t\" nat \"-X\" dnsqache\n");
-		}
+		script.append("run iptables \"-t\" nat \"-D\" OUTPUT \"1\"\n");
+		script.append("run iptables \"-t\" nat \"-F\" dnsqache\n");
+		script.append("run iptables \"-t\" nat \"-X\" dnsqache\n");
 
 		CoreTask.writeLinesToFile(
 				mConfigManager.getScriptFullPath(ScriptManager.SCRIPT_STOPQACHE),
