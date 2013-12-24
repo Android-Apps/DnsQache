@@ -34,6 +34,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageInfo;
 import android.preference.PreferenceManager;
+import android.text.Html;
 import android.util.Log;
 
 public class QacheApplication extends Application
@@ -126,7 +127,7 @@ public class QacheApplication extends Application
 		{
 			dnsMaxCacheSize = mConfigManager.get(ConfigManager.MAP_DNSMASQ_OPTS,
 					ConfigManager.PREF_DNSMASQ_CACHESIZE);
-			if (secondaryDns == null)
+			if (dnsMaxCacheSize == null)
 			{
 				dnsMaxCacheSize = sharedPrefs.getString(
 						this.getString(R.string.property_dnsmasq_cachesize),
@@ -260,5 +261,23 @@ public class QacheApplication extends Application
 	public NotificationManager getNotificationManager()
 	{
 		return this.mNotificationManager;
+	}
+
+	public String getVersionString()
+	{
+	        String version = "?";
+	        try {
+	            PackageInfo pi = getPackageManager().getPackageInfo(getPackageName(), 0);
+	            version = pi.versionName;
+	        } catch (Exception e) {
+	            Log.e(TAG, "Package name not found", e);
+	        }
+	        return version;
+	    }
+
+	public CharSequence getAuthors()
+	{
+		String authors = this.getString(R.string.about_layout_authors_names);
+		return Html.fromHtml(authors);
 	}
 }

@@ -503,9 +503,6 @@ public class ConfigManager
 			dnsmasqMap.remove(PREF_DNSMASQ_LOG_QUERIES);
 		}
 
-		// dnsmasqMap.put(PREF_DNSMASQ_LOG_FACILITY,
-		// this.getLogFile());
-
 		HashMap<String, String> optionsMap = this.getMap(MAP_DNSMASQ_OPTS);
 		String maxCacheSize = optionsMap.get(PREF_DNSMASQ_CACHESIZE);
 		if (maxCacheSize == null)
@@ -515,6 +512,9 @@ public class ConfigManager
 			optionsMap.put(PREF_DNSMASQ_CACHESIZE, maxCacheSize);
 		}
 		dnsmasqMap.put(PREF_DNSMASQ_CACHESIZE, maxCacheSize);
+
+		// dnsmasqMap.put(PREF_DNSMASQ_LOG_FACILITY,
+		// this.getLogFile());
 
 		// Add the rest
 		if (!bInitialized)

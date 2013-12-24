@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.tdhite.dnsqache"
-    android:versionCode="4"
-    android:versionName="0.83" >
+    android:versionCode="5"
+    android:versionName="0.84" >
 
     <uses-sdk android:minSdkVersion="9" android:targetSdkVersion="19" />
 

@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/aboutscrollview" 
+        android:orientation="vertical"
+        android:layout_width="fill_parent" 
+        android:layout_height="fill_parent">    
+
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+           <TextView
+               android:layout_width="fill_parent"
+               android:layout_height="wrap_content"
+               android:paddingLeft="15dp"
+               android:paddingRight="15dp"
+               android:paddingTop="15dp"
+               android:text="@string/about_layout_version"
+               android:textColor="#1e1e1e"
+               android:textStyle="bold" />
+
+           <TextView
+               android:id="@+id/versionName"
+               android:layout_width="fill_parent"
+               android:layout_height="wrap_content"
+               android:layout_gravity="center_vertical"
+               android:paddingLeft="15dp"
+               android:paddingRight="15dp"
+               android:text="- Unkown -"
+               android:textColor="#1e1e1e" />
+
+           <TextView
+               android:layout_width="fill_parent"
+               android:layout_height="wrap_content"
+               android:paddingLeft="15dp"
+               android:paddingRight="15dp"
+               android:paddingTop="15dp"
+               android:text="@string/about_layout_projecthome"
+               android:textColor="#1e1e1e"
+               android:textStyle="bold" />
+
+           <TextView
+               android:layout_width="fill_parent"
+               android:layout_height="wrap_content"
+               android:autoLink="web"
+               android:paddingLeft="15dp"
+               android:paddingRight="15dp"
+               android:text="@string/about_layout_project_site"
+               android:textColor="#1e1e1e"
+               android:textColorLink="#1e1ecf"
+               android:textSize="12sp" />
+           <TextView
+               android:layout_width="fill_parent"
+               android:layout_height="wrap_content"
+               android:paddingLeft="15dp"
+               android:paddingRight="15dp"
+               android:paddingTop="15dp"
+               android:text="@string/about_layout_license"
+               android:textColor="#1e1e1e"
+               android:textStyle="bold" />
+
+           <TextView
+               android:layout_width="fill_parent"
+               android:layout_height="wrap_content"
+               android:paddingLeft="15dp"
+               android:paddingRight="15dp"
+               android:text="@string/about_layout_license_name"
+               android:textColor="#1e1e1e" />
+
+           <TextView
+               android:layout_width="fill_parent"
+               android:layout_height="wrap_content"
+               android:autoLink="web"
+               android:paddingLeft="15dp"
+               android:paddingRight="15dp"
+               android:text="@string/about_layout_license_copy"
+               android:textColor="#1e1e1e"
+               android:textColorLink="#1e1ecf"
+               android:textSize="12sp" />
+
+           <TextView
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:paddingLeft="15dp"
+               android:paddingRight="15dp"
+               android:paddingTop="15dp"
+               android:text="@string/about_layout_authors"
+               android:textColor="#1e1e1e"
+               android:textStyle="bold" />
+
+           <TextView
+               android:id="@+id/authors"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:paddingLeft="15dp"
+               android:paddingRight="15dp"
+               android:text="Empty String"
+               android:textColor="#1e1e1e" />
+
+           <TextView
+               android:layout_width="fill_parent"
+               android:layout_height="wrap_content"
+               android:paddingLeft="15dp"
+               android:paddingRight="15dp"
+               android:paddingTop="15dp"
+               android:text="@string/about_layout_contributors"
+               android:textColor="#1e1e1e"
+               android:textStyle="bold" />
+
+           <TextView
+               android:layout_width="fill_parent"
+               android:layout_height="wrap_content"
+               android:paddingLeft="15dp"
+               android:paddingRight="15dp"
+               android:text="@string/about_layout_contributor_names"
+               android:textColor="#1e1e1e" />
+
+           <TextView
+               android:layout_width="fill_parent"
+               android:layout_height="wrap_content"
+               android:paddingLeft="15dp"
+               android:paddingRight="15dp"
+               android:paddingTop="15dp"
+               android:text="@string/about_layout_software"
+               android:textColor="#1e1e1e"
+               android:textStyle="bold" />
+
+           <TextView
+               android:layout_width="fill_parent"
+               android:layout_height="wrap_content"
+               android:autoLink="web"
+               android:paddingLeft="15dp"
+               android:paddingRight="15dp"
+               android:text="http://www.iptables.org"
+               android:textColor="#1e1e1e"
+               android:textColorLink="#1e1ecf"
+               android:textSize="12sp" />
+
+           <TextView
+               android:layout_width="fill_parent"
+               android:layout_height="wrap_content"
+               android:autoLink="web"
+               android:paddingLeft="15dp"
+               android:paddingRight="15dp"
+               android:text="http://thekelleys.org.uk/dnsmasq/doc.html"
+               android:textColor="#1e1e1e"
+               android:textColorLink="#1e1ecf"
+               android:textSize="12sp" />
+
+           <TextView
+               android:layout_width="fill_parent"
+               android:layout_height="wrap_content"
+               android:autoLink="web"
+               android:paddingLeft="15dp"
+               android:paddingRight="15dp"
+               android:text="http://www.pps.univ-paris-diderot.fr/~jch/software/polipo/"
+               android:textColor="#1e1e1e"
+               android:textColorLink="#1e1ecf"
+               android:textSize="12sp" />
+           
+           <TextView
+               android:layout_width="fill_parent"
+               android:layout_height="wrap_content"
+               android:autoLink="web"
+               android:paddingLeft="15dp"
+               android:paddingRight="15dp"
+               android:text="https://banu.com/tinyproxy/"
+               android:textColor="#1e1e1e"
+               android:textColorLink="#1e1ecf"
+               android:textSize="12sp" />
+           
+           <TextView
+               android:layout_width="fill_parent"
+               android:layout_height="wrap_content"
+               android:paddingLeft="15dp"
+               android:paddingRight="15dp"
+               android:paddingTop="15dp"
+               android:textColor="#1e1e1e"
+               android:textStyle="bold" />
+           <TextView
+               android:layout_width="fill_parent"
+               android:layout_height="wrap_content"
+               android:paddingLeft="15dp"
+               android:paddingRight="15dp"
+               android:paddingTop="15dp"
+               android:text="@string/about_changelog_software"
+               android:textColor="#1e1e1e"
+               android:textStyle="bold" />
+           <TextView
+               android:layout_width="fill_parent"
+               android:layout_height="wrap_content"
+               android:paddingLeft="15dp"
+               android:paddingRight="15dp"
+               android:text="@string/about_changelog_detail"
+               android:textColor="#1e1e1e" />
+                </LinearLayout>
+        </ScrollView>       

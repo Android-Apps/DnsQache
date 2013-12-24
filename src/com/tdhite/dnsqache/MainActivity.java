@@ -15,14 +15,22 @@ You should have received a copy of the GNU General Public License
 along with DnsQache.  If not, see <http://www.gnu.org/licenses/>.
 
 Copyright (c) 2012-2013 Tom Hite
+Portions also Copyright (c) 2009 by Harald Mueller and Sofia Lemons.
 
 */
 
 package com.tdhite.dnsqache;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences.Editor;
+import android.text.method.LinkMovementMethod;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -48,10 +56,10 @@ public class MainActivity extends Activity
 		if (focused && !mInitialized)
 		{
 			boolean dnsActive = QacheService.isDnsQacheActive();
-			boolean proxyActive = QacheService.isProxyActive();
 
 			// TODO: Really need to integrate the use of proxyActive
 			// as a separate indicator -- users have commented already.
+			//boolean proxyActive = QacheService.isProxyActive();
 
 			// Set the toggle button based on the system property
 			// dnsqache.status
@@ -61,6 +69,9 @@ public class MainActivity extends Activity
 
 			// set the text to reflect the next user action
 			setTextViewText(R.id.text_qache_start, dnsActive);
+
+            // Open donate-dialog
+            openDonateDialog();
 
 			mInitialized = true;
 		}
@@ -93,6 +104,92 @@ public class MainActivity extends Activity
 		Intent intent = new Intent(this, ViewLogActivity.class);
 		startActivity(intent);
 		return true;
+	}
+
+	private void openAboutDialog()
+	{
+		QacheApplication qacheApp = (QacheApplication) this.getApplicationContext();
+
+		LayoutInflater li = LayoutInflater.from(this);
+		View view = li.inflate(R.layout.activity_about, null);
+		TextView versionName = (TextView) view.findViewById(R.id.versionName);
+
+		versionName.setText(qacheApp.getVersionName());
+
+		TextView authors = (TextView) view.findViewById(R.id.authors);
+		authors.setText(qacheApp.getAuthors());
+		authors.setMovementMethod(LinkMovementMethod.getInstance());
+
+		new AlertDialog.Builder(MainActivity.this)
+				.setTitle(getString(R.string.activity_main_about))
+				.setView(view)
+				.setNeutralButton(getString(R.string.activity_main_donate),
+						new DialogInterface.OnClickListener()
+						{
+							public void onClick(DialogInterface dialog,
+									int whichButton)
+							{
+								Log.d(TAG, "Donate pressed");
+								Uri uri = Uri
+										.parse(getString(R.string.activity_main_donate_url));
+								startActivity(new Intent(Intent.ACTION_VIEW,
+										uri));
+							}
+						})
+				.setNegativeButton(getString(R.string.activity_main_close),
+						new DialogInterface.OnClickListener()
+						{
+							public void onClick(DialogInterface dialog,
+									int whichButton)
+							{
+								Log.d(TAG, "Close pressed");
+							}
+						}).show();
+	}
+
+	private void openDonateDialog()
+	{
+		QacheApplication qacheApp = (QacheApplication) this.getApplicationContext();
+
+		if (qacheApp.showDonationDialog())
+		{
+			Editor prefs = qacheApp.getSettingsEditor();
+
+			// Disable donate-dialog for later startups
+			prefs.putBoolean("donatepref", false);
+			prefs.commit();
+
+			// Creating Layout
+			LayoutInflater li = LayoutInflater.from(this);
+			View view = li.inflate(R.layout.view_donate, null);
+			new AlertDialog.Builder(MainActivity.this)
+					.setTitle(
+							getString(R.string.activity_main_donation_headline))
+					.setView(view)
+					.setNeutralButton(getString(R.string.activity_main_close),
+							new DialogInterface.OnClickListener()
+							{
+								public void onClick(DialogInterface dialog,
+										int whichButton)
+								{
+									Log.d(TAG, "Close pressed");
+								}
+							})
+					.setNegativeButton(
+							getString(R.string.activity_main_donate),
+							new DialogInterface.OnClickListener()
+							{
+								public void onClick(DialogInterface dialog,
+										int whichButton)
+								{
+									Log.d(TAG, "Donate pressed");
+									Uri uri = Uri
+											.parse(getString(R.string.activity_main_donate_url));
+									startActivity(new Intent(
+											Intent.ACTION_VIEW, uri));
+								}
+							}).show();
+		}
 	}
 
     private void startQache()
@@ -138,8 +235,8 @@ public class MainActivity extends Activity
 	        	handled = this.openSettingsActivity();
 	        	break;
 	        case R.id.action_about:
-	        	// Not quite yet
-	            handled = false;
+	        	this.openAboutDialog();
+	            handled = true;
 	            break;
 	        case R.id.action_view_log:
 	        	handled = this.openViewLogActivity();

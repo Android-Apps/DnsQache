@@ -337,7 +337,7 @@ public class ConfigureDNSActivity extends Activity implements OnItemSelectedList
     private void initializeCacheSize()
     {
         String cacheSize = prefs.getPrefCacheSize();
-        
+
         ((EditText)findViewById(R.id.edit_cache_size)).setText(cacheSize);
     }
 
@@ -353,7 +353,6 @@ public class ConfigureDNSActivity extends Activity implements OnItemSelectedList
         // set the selection change handler but prevent listener 
         // from firing on the newly instantiated spinner control
         spinner.post(new Runnable() {
-            
             public void run() 
             {
                 spinner.setOnItemSelectedListener(listener);
@@ -514,7 +513,7 @@ public class ConfigureDNSActivity extends Activity implements OnItemSelectedList
         String dns2 = editAddress2.getText().toString();
         boolean activateOnBoot = checkActivateOnBoot.isChecked();
         boolean logQueries = checkLogQueries.isChecked();
-        
+
         outState.putString(ConfigManager.PREF_DNSMASQ_CACHESIZE, cacheSize);
         outState.putString(ConfigManager.PREF_DNS_PROVIDER, provider);
         outState.putString(ConfigManager.PREF_DNSMASQ_PRIMARY, dns1);
