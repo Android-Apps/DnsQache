@@ -23,7 +23,7 @@ package com.tdhite.dnsqache;
 /*
   * Copyright (C) 2006 The Android Open Source Project
   *
-  * Adaptation for DnaQache Copyright (C) 2013 Tom Hite
+  * Adaptation for DnsQache Copyright (C) 2013 Tom Hite
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ import java.util.Iterator;
 public class NetworkConnectivityListener
 {
 	private static final String TAG = "DNSQACHE -> NetworkConnectivityListener";
-	private static final boolean DBG = true;
+	private static final boolean DBG = false;
 
 	private HashMap<Handler, Integer> mHandlers = new HashMap<Handler, Integer>();
 
