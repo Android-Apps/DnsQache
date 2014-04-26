@@ -25,6 +25,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 
+import com.tdhite.dnsqache.system.ConfigManager;
+
 import android.os.Bundle;
 import android.app.Activity;
 import android.webkit.WebSettings;
@@ -38,14 +40,16 @@ public class ViewLogActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_view_log);
 
-		// Init Application
+		Bundle b = getIntent().getExtras();
+		int id = b.getInt(MainActivity.VIEW_LOG_FILE_EXTRA);
+
 		WebView webView = (WebView) findViewById(R.id.webviewLog);
 		webView.getSettings().setJavaScriptEnabled(false);
 		webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
 		webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(false);
 		webView.getSettings().setSupportMultipleWindows(false);
 		webView.getSettings().setSupportZoom(false);
-		setWebViewContent(webView);
+		setWebViewContent(webView, id);
 	}
 
 	private static final String HTML_HEADER = "<html><head><title>background-color</title> "
@@ -58,23 +62,41 @@ public class ViewLogActivity extends Activity {
 			+ "</style> " + "</head><body>";
 	private static final String HTML_FOOTER = "</body></html>";
 
-	private void setWebViewContent(WebView webView) {
+	private void setWebViewContent(WebView webView, int id) {
 		QacheService svc = QacheService.getSingleton();
-		if (svc != null) {
-			svc.generateLogFile();
+		ConfigManager config = ConfigManager.getConfigManager();
+		String logPath = null;
+		switch (id) {
+			case R.id.action_view_log:
+				logPath = config.getLogFile();
+				break;
+			case R.id.action_view_polipo_log:
+				logPath = config.getPolipoLogFile();
+				if (svc != null) {
+					svc.generateLogFile();
+				}
+				break;
+			case R.id.action_view_tinyproxy_log:
+				logPath = config.getTinyProxyLogFile();
+				break;
+			default:
+				logPath = config.getLogFile();
+				break;
 		}
+		String logs = this.readLogfile(logPath);
+		CharSequence target = "\n";
+		CharSequence replace = "<br/>";
 		webView.loadDataWithBaseURL("fake://fakeme",
-				HTML_HEADER + this.readLogfile() + HTML_FOOTER, "text/html",
+				HTML_HEADER + logs.replace(target, replace) + HTML_FOOTER, "text/html",
 				"UTF-8", "fake://fakeme");
 	}
 
-	private String readLogfile() {
+	private String readLogfile(String logFile) {
 		FileInputStream fis = null;
 		InputStreamReader isr = null;
 		String data = "";
-		QacheApplication app = (QacheApplication) this.getApplication();
+		ConfigManager config = ConfigManager.getConfigManager();
 		try {
-			String logFile = app.getConfigManager().getLogFile();
 			File file = new File(logFile);
 			fis = new FileInputStream(file);
 			isr = new InputStreamReader(fis, "utf-8");
@@ -82,9 +104,8 @@ public class ViewLogActivity extends Activity {
 			isr.read(buff);
 			data = new String(buff);
 		} catch (Exception e) {
-			data = this.getString(R.string.log_activity_filenotfound)
-					+ ":\n" + app.getConfigManager().getLogFile()
-					+ "\nException:\n" + e.toString();
+			data = this.getString(R.string.log_activity_filenotfound) + ":<br/>\n"
+					+ config.getLogFile() + "<br/>\nException:<br/>\n" + e.toString();
 		} finally {
 			try {
 				if (isr != null)

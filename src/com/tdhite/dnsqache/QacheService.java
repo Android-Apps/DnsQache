@@ -133,7 +133,7 @@ public class QacheService extends Service
 			QacheService _this = QacheService.getSingleton();
 			if (_this != null)
 			{
-				String dnsqache = _this.mQacheApplication.getConfigManager()
+				String dnsqache = ConfigManager.getConfigManager()
 						.getBinaryFullPath(ConfigManager.DNSMASQ_BINARY);
 				bActive = CoreTask.isProcessRunning(dnsqache);
 			}
@@ -158,9 +158,9 @@ public class QacheService extends Service
 			QacheService _this = QacheService.getSingleton();
 			if (_this != null)
 			{
-				String polipo = _this.mQacheApplication.getConfigManager()
+				String polipo = ConfigManager.getConfigManager()
 						.getBinaryFullPath(ConfigManager.POLIPO_BINARY);
-				String tinyproxy = _this.mQacheApplication.getConfigManager()
+				String tinyproxy = ConfigManager.getConfigManager()
 						.getBinaryFullPath(ConfigManager.TINYPROXY_BINARY);
 				bActive = CoreTask.isProcessRunning(polipo)
 						|| CoreTask.isProcessRunning(tinyproxy);
@@ -242,20 +242,25 @@ public class QacheService extends Service
 	{
 		SharedPreferences sharedPrefs = PreferenceManager
 				.getDefaultSharedPreferences(this);
-		int proxyAppIndex = sharedPrefs.getInt(ConfigManager.PREF_UI_PROXY_SPINNER_POSITION,
-				ConfigManager.PROXY_DEFAULT_SPINNER_POSITION);
+		Boolean proxyActive = sharedPrefs.getBoolean(
+				ConfigManager.PREF_PROXY_ACTIVATE,
+				ConfigManager.PREF_PROXY_DEFAULT_ACTIVATE);
 		String stopProxyScript = null;
 
-		if (proxyAppIndex > 0)
+		if (proxyActive)
 		{
-			stopProxyScript = proxyAppIndex == 1 ? ScriptManager.SCRIPT_STOPPOLIPO
+			String proxyType = sharedPrefs.getString(
+					ConfigManager.PREF_PROXY_TYPE,
+					ConfigManager.PREF_PROXY_DEFAULT_TYPE);
+			stopProxyScript = proxyType
+					.equals(ConfigManager.PREF_PROXY_DEFAULT_TYPE) ? ScriptManager.SCRIPT_STOPPOLIPO
 					: ScriptManager.SCRIPT_STOPTINYPROXY;
 		}
 
 		resetDns();
-		boolean worked = mScripter.runScript(ScriptManager.SCRIPT_STOPQACHE, true)
-				&& stopProxyScript == null ? true : mScripter.runScript( stopProxyScript,
-						true);
+		boolean worked = mScripter.runScript(ScriptManager.SCRIPT_STOPQACHE,
+				true) && stopProxyScript == null ? true : mScripter.runScript(
+				stopProxyScript, true);
 
 		mState = worked ? mState : State.FAILURE_EXE;
 	}
@@ -270,26 +275,31 @@ public class QacheService extends Service
 		{
 			SharedPreferences sharedPrefs = PreferenceManager
 					.getDefaultSharedPreferences(this);
-			int proxyAppIndex = sharedPrefs.getInt(ConfigManager.PREF_UI_PROXY_SPINNER_POSITION,
-					ConfigManager.PROXY_DEFAULT_SPINNER_POSITION);
+			Boolean proxyActive = sharedPrefs.getBoolean(
+					ConfigManager.PREF_PROXY_ACTIVATE,
+					ConfigManager.PREF_PROXY_DEFAULT_ACTIVATE);
 			boolean worked = true;
 
-			if (proxyAppIndex > 0)
+			if (proxyActive)
 			{
 				Log.d(TAG, "Starting proxy  . . .");
-				worked = proxyAppIndex == 1 ?
-						mScripter.runScript(ScriptManager.SCRIPT_STARTPOLIPO, true) :
-				mScripter.runScript(ScriptManager.SCRIPT_STARTTINYPROXY, true);
+				String proxyApp = sharedPrefs.getString(
+						ConfigManager.PREF_PROXY_TYPE,
+						ConfigManager.PREF_PROXY_DEFAULT_TYPE);
+				worked = proxyApp.equals(ConfigManager.PREF_PROXY_DEFAULT_TYPE) ? mScripter
+						.runScript(ScriptManager.SCRIPT_STARTPOLIPO, true)
+						: mScripter.runScript(
+								ScriptManager.SCRIPT_STARTTINYPROXY, true);
 			}
 
 			if (!worked)
 			{
-				Log.d(TAG, ". . . tinyproxy failed to start!");
+				Log.d(TAG, ". . . proxy failed to start!");
 				mState = State.FAILURE_EXE;
 			}
 			else
 			{
-				Log.d(TAG, ". . . tinyproxy started Successfully. Now starting dnsmasq  . . .");
+				Log.d(TAG, ". . . proxy started Successfully. Now starting dnsmasq  . . .");
 				worked = mScripter.runScript(ScriptManager.SCRIPT_STARTQACHE, true);
 				if (worked)
 				{
@@ -452,7 +462,8 @@ public class QacheService extends Service
 			public void run()
 			{
 				// Generate configuration
-				QacheService.this.mQacheApplication.updateDNSConfiguration();
+				ConfigManager.getConfigManager().updateDNSConfiguration(
+								QacheService.this.mQacheApplication);
 
 				// Start the dnsmasq daemon
 				QacheService.this.startDaemons();
@@ -525,7 +536,8 @@ public class QacheService extends Service
 				QacheService.this.stopDaemons();
 
 				// Generate configuration
-				mQacheApplication.updateDNSConfiguration();
+				ConfigManager.getConfigManager().updateDNSConfiguration(
+						mQacheApplication);
 
 				// Start the dns cache daemon
 				QacheService.this.startDaemons();
@@ -637,8 +649,8 @@ public class QacheService extends Service
 		mQacheApplication = (QacheApplication) mSingleton.getApplication();
 
 		// Initialize the script manager
-		mScripter = new ScriptManager(mQacheApplication.getConfigManager());
-		mScripter.generateScripts(mQacheApplication.getConfigManager());
+		mScripter = new ScriptManager(ConfigManager.getConfigManager());
+		mScripter.generateScripts(this);
 
 		// Init timeStampCounterUpdate
 		mTimestampCounterUpdate = System.currentTimeMillis();
@@ -655,7 +667,6 @@ public class QacheService extends Service
 		{
 			Editor prefs = QacheService.this.mQacheApplication
 					.getSettingsEditor();
-			prefs.putBoolean(ConfigManager.PREF_KEEP_REQUEST_COUNT, false);
 			prefs.commit();
 
 			mState = State.RUNNING;

@@ -20,6 +20,7 @@ Copyright (c) 2012-2013 Tom Hite
 
 package com.tdhite.dnsqache.system;
 
+import android.content.Context;
 import android.util.Log;
 
 public class ScriptManager
@@ -78,10 +79,8 @@ public class ScriptManager
 		script.append("\" \"-j\" RETURN\n");
 	}
 
-	private void generateStartScript(ConfigManager config)
+	private void generateStartScript(ConfigManager config, String dnsServers[])
 	{
-		String dnsServers[] = config.getDNSServers();
-
 		StringBuilder script = new StringBuilder();
 		script.append("run killall dnsqache\n");
 		script.append("run rm -f \"");
@@ -174,6 +173,8 @@ public class ScriptManager
 		String script = "run killall tinyproxy\n"
 				+ "run rm -f \"" + mConfigManager.getTinyProxyLogFile() + "\"\n"
 				+ "run rm -f \"" + mConfigManager.getTinyProxyPidFile() + "\"\n"
+				+ "run echo >\"" + mConfigManager.getTinyProxyLogFile() + "\"\n"
+				+ "run chmod 644 \"" + mConfigManager.getTinyProxyLogFile() + "\"\n"
 				+ "run \"" + mConfigManager.getBinaryFullPath(ConfigManager.TINYPROXY_BINARY)
 				+ "\" \"-c " + mConfigManager.getTinyProxyConfigFile()
 				+ "\"\nrun chmod 644 \"" + mConfigManager.getTinyProxyLogFile()
@@ -199,6 +200,8 @@ public class ScriptManager
 		String script = "run killall polipo\n"
 				+ "run rm -f \"" + mConfigManager.getPolipoLogFile() + "\"\n"
 				+ "run rm -f \"" + mConfigManager.getPolipoPidFile() + "\"\n"
+				+ "run echo >\"" + mConfigManager.getPolipoLogFile() + "\"\n"
+				+ "run chmod 644 \"" + mConfigManager.getPolipoLogFile() + "\"\n"
 				+ "run \"" + mConfigManager.getBinaryFullPath(ConfigManager.POLIPO_BINARY)
 				+ "\" \"-c " + mConfigManager.getPolipoConfigFile()
 				+ "\"\nsetprop \"proxyqache.status\" running\n";
@@ -217,9 +220,12 @@ public class ScriptManager
 				script);
 	}
 
-	public void generateScripts(ConfigManager configs)
+	public void generateScripts(Context context)
 	{
-		this.generateStartScript(configs);
+		ConfigManager configs = ConfigManager.getConfigManager();
+		String dnsServers[] = configs.getDNSServers(context);
+
+		this.generateStartScript(configs, dnsServers);
 		this.generateStopScript();
 		this.generateSetDnsScript();
 		this.generateRestartScript();

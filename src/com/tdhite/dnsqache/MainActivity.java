@@ -40,7 +40,7 @@ import android.widget.ToggleButton;
 public class MainActivity extends Activity
 {
 	public static final String TAG = "DNSQACHE -> MainActivity";
-
+	public static final String VIEW_LOG_FILE_EXTRA = "logFile";
 	private boolean mInitialized = false;
 
 	@Override
@@ -56,10 +56,6 @@ public class MainActivity extends Activity
 		if (focused && !mInitialized)
 		{
 			boolean dnsActive = QacheService.isDnsQacheActive();
-
-			// TODO: Really need to integrate the use of proxyActive
-			// as a separate indicator -- users have commented already.
-			//boolean proxyActive = QacheService.isProxyActive();
 
 			// Set the toggle button based on the system property
 			// dnsqache.status
@@ -85,23 +81,19 @@ public class MainActivity extends Activity
 		textView.setText(text);
 	}
 
-    private boolean openConfigureActivity()
-    {
-        Intent intent = new Intent(this, ConfigureDNSActivity.class);
-        startActivity(intent);
-		return true;
-    }
-
-	private boolean openSettingsActivity()
+	private boolean openPreferencesActivity()
 	{
-		Intent intent = new Intent(this, ConfigureProxyActivity.class);
+		Intent intent = new Intent(this, PrefsActivity.class);
 		startActivity(intent);
 		return true;
 	}
 
-	private boolean openViewLogActivity()
+	private boolean openViewLogActivity(int id)
 	{
+		Bundle b = new Bundle();
+	    b.putInt(VIEW_LOG_FILE_EXTRA, id);
 		Intent intent = new Intent(this, ViewLogActivity.class);
+		intent.putExtras(b);
 		startActivity(intent);
 		return true;
 	}
@@ -228,18 +220,21 @@ public class MainActivity extends Activity
 
 		// Handle item selection
 	    switch (item.getItemId()) {
-	        case R.id.action_configure:
-	        	handled = this.openConfigureActivity();
-	        	break;
-	        case R.id.action_settings:
-	        	handled = this.openSettingsActivity();
-	        	break;
 	        case R.id.action_about:
 	        	this.openAboutDialog();
 	            handled = true;
 	            break;
 	        case R.id.action_view_log:
-	        	handled = this.openViewLogActivity();
+	        	handled = this.openViewLogActivity(item.getItemId());
+	        	break;
+	        case R.id.action_view_tinyproxy_log:
+	        	handled = this.openViewLogActivity(item.getItemId());
+	        	break;
+	        case R.id.action_view_polipo_log:
+	        	handled = this.openViewLogActivity(item.getItemId());
+	        	break;
+	        case R.id.action_preferences:
+	        	handled = this.openPreferencesActivity();
 	        	break;
 	    }
 

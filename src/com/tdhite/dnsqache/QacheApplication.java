@@ -1,22 +1,14 @@
 /*
-This file is part of DnsQache.
-
-DnsQache is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-DnsQache is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with DnsQache.  If not, see <http://www.gnu.org/licenses/>.
-
-Copyright (c) 2012-2013 Tom Hite
-
-*/
+ * This file is part of DnsQache. DnsQache is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version. DnsQache is distributed in
+ * the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
+ * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+ * the GNU General Public License for more details. You should have received a
+ * copy of the GNU General Public License along with DnsQache. If not, see
+ * <http://www.gnu.org/licenses/>. Copyright (c) 2012-2013 Tom Hite
+ */
 
 package com.tdhite.dnsqache;
 
@@ -51,9 +43,6 @@ public class QacheApplication extends Application
 	// Intents
 	private PendingIntent mMainIntent = null;
 
-	// Configuration Management
-	private ConfigManager mConfigManager = null;
-
 	// CoreTask
 	private CoreTask mCoreTask = null;
 
@@ -64,23 +53,22 @@ public class QacheApplication extends Application
 		Log.d(TAG, "Calling onCreate()");
 
 		// qache.cfg
-		this.mConfigManager = new ConfigManager();
-		this.mConfigManager.setDataFileDir(
-				this, this.getFilesDir().getParent());
+		ConfigManager configManager = ConfigManager.getConfigManager();
+		configManager.setDataFileDir(this, this.getFilesDir().getParent());
 		Log.d(TAG, "Current directory is "
 				+ this.getApplicationContext().getFilesDir().getParent());
 
 		// init notificationManager
 		this.mNotificationManager = (NotificationManager) this
 				.getSystemService(Context.NOTIFICATION_SERVICE);
-    	this.mNotification = new Notification(R.drawable.start_notification,
-    			"DNSQache", System.currentTimeMillis());
+		this.mNotification = new Notification(R.drawable.start_notification,
+				"DNSQache", System.currentTimeMillis());
 
 		this.mMainIntent = PendingIntent.getActivity(this, 0, new Intent(this,
 				MainActivity.class), 0);
 
 		// Initialize configuration
-		this.updateDNSConfiguration();
+		ConfigManager.getConfigManager().updateDNSConfiguration(this);
 	}
 
 	@Override
@@ -89,111 +77,20 @@ public class QacheApplication extends Application
 		Log.d(TAG, "Calling onTerminate()");
 	}
 
-	public void updateDNSConfiguration(String primaryDns, String secondaryDns,
-			int cacheSize)
-	{
-		long startStamp = System.currentTimeMillis();
-		SharedPreferences sharedPrefs =
-				PreferenceManager.getDefaultSharedPreferences(this);
-		Editor prefsEditor = sharedPrefs.edit();
-
-		// the number seven is just because 1.1.1.1 is seven chars, eh?
-		if (primaryDns == null)
-		{
-			primaryDns = mConfigManager.get(ConfigManager.MAP_DNSMASQ_OPTS,
-					ConfigManager.PREF_DNSMASQ_PRIMARY);
-			if (primaryDns == null || primaryDns.length() < 7)
-			{
-				primaryDns = sharedPrefs.getString(
-						this.getString(R.string.default_name_server1),
-						ConfigManager.PREF_DNSMASQ_DEFAULT_PRIMARY_IP);
-			}
-		}
-
-		if (secondaryDns == null)
-		{
-			secondaryDns = mConfigManager.get(ConfigManager.MAP_DNSMASQ_OPTS,
-					ConfigManager.PREF_DNSMASQ_SECONDARY);
-			if (secondaryDns == null || secondaryDns.length() < 7)
-			{
-				secondaryDns = sharedPrefs.getString(
-						this.getString(R.string.default_name_server2),
-						ConfigManager.PREF_DNSMASQ_DEFAULT_SECONDARY_IP);
-			}
-		}
-
-		String dnsMaxCacheSize;
-		if (cacheSize < 0)
-		{
-			dnsMaxCacheSize = mConfigManager.get(ConfigManager.MAP_DNSMASQ_OPTS,
-					ConfigManager.PREF_DNSMASQ_CACHESIZE);
-			if (dnsMaxCacheSize == null)
-			{
-				dnsMaxCacheSize = sharedPrefs.getString(
-						this.getString(R.string.property_dnsmasq_cachesize),
-						ConfigManager.PREF_DNSMASQ_DEFAULT_CACHE_SIZE);
-			}
-		}
-		else
-		{
-			dnsMaxCacheSize = "" + cacheSize;
-		}
-
-		// put the values into the config manager
-		mConfigManager.put(ConfigManager.MAP_DNSMASQ_OPTS,
-				ConfigManager.PREF_DNSMASQ_PRIMARY, primaryDns);
-		mConfigManager.put(ConfigManager.MAP_DNSMASQ_OPTS,
-				ConfigManager.PREF_DNSMASQ_SECONDARY, secondaryDns);
-		mConfigManager.put(ConfigManager.MAP_DNSMASQ_OPTS,
-				ConfigManager.PREF_DNSMASQ_CACHESIZE, dnsMaxCacheSize);
-
-		// put the values into shared preferences for others to read
-		prefsEditor.putString(
-				ConfigManager.PREF_DNSMASQ_PRIMARY, primaryDns);
-		prefsEditor.putString(
-				ConfigManager.PREF_DNSMASQ_SECONDARY, secondaryDns);
-		prefsEditor.putString(
-				ConfigManager.PREF_DNSMASQ_CACHESIZE, dnsMaxCacheSize);
-		prefsEditor.commit();
-
-		// writing the config
-		if (mConfigManager.commit(this))
-		{
-			Log.d(TAG,
-					"Creation of configuration-files took ==> "
-							+ (System.currentTimeMillis() - startStamp)
-							+ " milliseconds.");
-			QacheService svc = QacheService.getSingleton();
-			if (svc != null)
-			{
-				svc.setDns();
-			}
-		}
-		else
-		{
-			Log.e(TAG, "Unable to update configuration preferences!");
-		}
-	}
-
-	public void updateDNSConfiguration()
-	{
-		this.updateDNSConfiguration(null, null, -1);
-	}
-
 	// get preferences on whether donate-dialog should be displayed
 	public boolean showDonationDialog()
 	{
-		SharedPreferences sharedPrefs =
-				PreferenceManager.getDefaultSharedPreferences(this);
+		SharedPreferences sharedPrefs = PreferenceManager
+				.getDefaultSharedPreferences(this);
 		return sharedPrefs.getBoolean(ConfigManager.PREF_DONATE, true);
 	}
 
 	public int getNotificationType()
 	{
-		SharedPreferences sharedPrefs =
-				PreferenceManager.getDefaultSharedPreferences(this);
-		return Integer.parseInt(
-				sharedPrefs.getString(ConfigManager.PREF_NOTIFICATION, "2"));
+		SharedPreferences sharedPrefs = PreferenceManager
+				.getDefaultSharedPreferences(this);
+		return Integer.parseInt(sharedPrefs.getString(
+				ConfigManager.PREF_NOTIFICATION, "2"));
 	}
 
 	// Notification
@@ -239,11 +136,6 @@ public class QacheApplication extends Application
 		return version;
 	}
 
-	public ConfigManager getConfigManager()
-	{
-		return this.mConfigManager;
-	}
-
 	public CoreTask getCoreTask()
 	{
 		return this.mCoreTask;
@@ -252,8 +144,8 @@ public class QacheApplication extends Application
 	@SuppressLint("CommitPrefEdits")
 	public Editor getSettingsEditor()
 	{
-		SharedPreferences sharedPrefs =
-				PreferenceManager.getDefaultSharedPreferences(this);
+		SharedPreferences sharedPrefs = PreferenceManager
+				.getDefaultSharedPreferences(this);
 		Editor prefsEditor = sharedPrefs.edit();
 		return prefsEditor;
 	}
@@ -265,15 +157,19 @@ public class QacheApplication extends Application
 
 	public String getVersionString()
 	{
-	        String version = "?";
-	        try {
-	            PackageInfo pi = getPackageManager().getPackageInfo(getPackageName(), 0);
-	            version = pi.versionName;
-	        } catch (Exception e) {
-	            Log.e(TAG, "Package name not found", e);
-	        }
-	        return version;
-	    }
+		String version = "?";
+		try
+		{
+			PackageInfo pi = getPackageManager().getPackageInfo(
+					getPackageName(), 0);
+			version = pi.versionName;
+		}
+		catch (Exception e)
+		{
+			Log.e(TAG, "Package name not found", e);
+		}
+		return version;
+	}
 
 	public CharSequence getAuthors()
 	{

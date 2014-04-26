@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" android:orderingFromXml="true">
+	<PreferenceCategory android:title="General" android:summary="Settings for the DnsQache Application.">
+	    <CheckBoxPreference android:key="dnsqache.activatQacheOnBoot" android:summary="Start DnsQache when the device boots." android:title="@string/activateonboot" android:defaultValue="false"/>
+	</PreferenceCategory>
+	<PreferenceCategory
+	   android:summary="Settings to tune DNS host name caching."
+	   android:title="DNS Cache Settings" >
+	    <ListPreference android:defaultValue="@string/default_dns_provider" android:entries="@array/array_dns_provider_names" android:title="DNS Provider" android:key="dnsqache.provider" android:entryValues="@array/array_dns_provider_names" android:summary="The DNS Provider to use for host lookups." />
+	    <ListPreference android:defaultValue="0" android:entries="@array/dnsmasq_cache_size" android:title="Cache Size" android:key="dnsmasq.cache-size" android:entryValues="@array/dnsmasq_cache_size" android:summary="Maximum number of hostnames to cache." />
+	    <EditTextPreference android:title="DNSQache DNS Cache Port" android:key="dnsmasq.port" android:defaultValue="5353" android:summary="DNS port to use for DNS redirection." />
+	    <CheckBoxPreference android:key="dnsmasq.log-queries" android:summary="Log DNS Queries to logcat." android:title="Log DNS Queries" android:defaultValue="false" />
+	</PreferenceCategory>
+	<PreferenceCategory android:title="Proxy Settings" android:summary="Settings for the HTTP/HTTPS Proxy.">
+	    <CheckBoxPreference android:key="proxy.activate" android:title="HTTP/HTTPS Proxy" android:summary="Use  HTTP/HTTPS Proxy" android:defaultValue="false"/>    
+	    <ListPreference android:entries="@array/array_proxy_apps" android:entryValues="@array/array_proxy_binaries" android:defaultValue="polipo" android:title="Proxy Type" android:key="proxy.type" android:summary="Select a proxy type to use."/>
+	    <PreferenceScreen android:summary="Advanced Settings for Polipo (Be Careful!)." android:title="Polipo Settings">
+	       	<PreferenceCategory android:title="General" android:summary="General Advanced Settings">
+	       	    <EditTextPreference android:key="polipo.displayName" android:defaultValue="Polipo" android:summary="Name to use for (log) error messages." android:title="Display Name" />
+	       	    <EditTextPreference android:key="polipo.proxyAddress" android:defaultValue="0.0.0.0" android:summary="Address to which proxy clients should connect." android:title="Proxy Address" />
+	       	    <EditTextPreference android:key="polipo.proxyPort" android:defaultValue="3128" android:summary="Port on which proxy clients should connect." android:title="Proxy Port" />
+	       	    <CheckBoxPreference android:defaultValue="true" android:title="Disable Via Headers" android:key="polipo.disableVia" android:summary="Generate 'via' Headers." />
+	       	    <CheckBoxPreference android:defaultValue="true" android:title="Lax HTTP Parser" android:key="polipo.laxHttpParser" android:summary="Ignore incorrect HTTP headers." />
+	       	    <CheckBoxPreference android:defaultValue="false" android:title="Unaligned Range Requests" android:key="polipo.allowUnalignedRangeRequests" android:summary="Whether to allow unaligned range requests."/>
+	       	</PreferenceCategory>
+	       	<PreferenceCategory android:title="Security" android:summary="Settings related to security.">
+	       	    <EditTextPreference android:key="polipo.allowedClients" android:defaultValue="127.0.0.1, 192.168.43.0/24" android:summary="CIDR values for allowed clients (comma separated)." android:title="Allowed Clients" />
+	       	    <EditTextPreference android:key="polipo.allowedPorts" android:summary="Ports clients can connect via the Proxy." android:title="Allowed Ports" android:defaultValue="1-65535" />
+	       	    <CheckBoxPreference android:defaultValue="false" android:title="Cache is Shared" android:key="polipo.cacheIsShared" android:summary="Ignore the server-side ‘Cache-Control’ (etc.) directives." />
+	       	</PreferenceCategory>
+	       	<PreferenceCategory android:title="Connection Limits" android:summary="Settings related to limiting connections.">
+	       	    <ListPreference android:entryValues="@array/polipo_max_age" android:entries="@array/polopo_max_age_ui" android:key="polipo.maxConnectionAge" android:title="Max Connection Age" android:defaultValue="5m" android:summary="Maximum age of a server-side connection."/><EditTextPreference android:key="polipo.maxConnectionRequests" android:defaultValue="120" android:summary="Max requests on a server-side connection." android:title="Max Connection Requests" />
+	       	    <EditTextPreference android:key="polipo.serverSlots" android:defaultValue="2" android:summary="Max connections per server." android:title="Server Slots" />
+	       	    <EditTextPreference android:key="polipo.serverMaxSlots" android:summary="Max connections per broken server." android:title="Server Max Slots" android:defaultValue="8" />
+	       	</PreferenceCategory>
+			<PreferenceCategory android:title="Process" android:summary="Settings related only to the Polipo process.">
+			    <CheckBoxPreference android:selectable="false" android:defaultValue="true" android:title="Run as a Daemon" android:key="polipo.daemonise" android:enabled="false" android:summary="Run polipo as a background process." />
+			    <CheckBoxPreference android:selectable="false" android:defaultValue="true" android:title="Log to System Log" android:key="polipo.logSyslog" android:enabled="false" android:summary="Log to system log (logcat)." />
+			</PreferenceCategory>
+		</PreferenceScreen>
+		<PreferenceScreen android:summary="Advanced Settings for TinyProxy (Be Careful!)." android:title="TinyProxy Advanced Settings">
+		    <PreferenceCategory android:summary="General Settings">
+		        <EditTextPreference android:title="Proxy Port" android:key="tinyproxy.Port" android:summary="The port to use for the proxy." android:defaultValue="3128" />
+		        <EditTextPreference android:title="Inactivity Timeout" android:key="tinyproxy.TimeOut" android:defaultValue="600" android:summary="Seconds of inactivity before closing connections." />
+		        <ListPreference android:entryValues="@array/tinyproxy_loglevel" android:summary="Set the logging level (see tinyproxy docs)." android:title="Logging Level" android:key="tinyproxy.LogLevel" android:entries="@array/tinyproxy_loglevel" android:defaultValue="Connect" />
+	        </PreferenceCategory>
+			<PreferenceCategory android:title="Process Settings">
+			    <EditTextPreference android:title="Minumum Spare Servers" android:key="tinyproxy.MinSpareServers" android:defaultValue="5" android:summary="Minumum spare servers to maintain." />
+			    <EditTextPreference android:title="Maximum Spare Servers" android:key="tinyproxy.MaxSpareServers" android:defaultValue="20" android:summary="Maximum number of servers to allow." />
+			    <EditTextPreference android:title="Start Servers" android:key="tinyproxy.StartServers" android:defaultValue="10" android:summary="Number of servers to start at startup." />
+		    </PreferenceCategory>
+		    <PreferenceCategory android:title="Security Related">
+	        	<EditTextPreference android:title="Maximum Clients" android:key="tinyproxy.MaxClients" android:defaultValue="100" android:summary="Max number of clients connections to allow." />
+	        	<EditTextPreference android:title="Max Requests per Child" android:key="tinyproxy.MaxRequestsPerChild" android:defaultValue="0" android:summary="Total connections allowed before killing threads. " />
+	        	<EditTextPreference android:title="Via Proxy Name" android:key="tinyproxy.ViaProxyName" android:defaultValue="DnsQache" android:summary="Name to use for  Via proxy headers." />
+	    	</PreferenceCategory>
+		</PreferenceScreen>
+	</PreferenceCategory>
+</PreferenceScreen>

@@ -1,22 +1,14 @@
 /*
-This file is part of DnsQache.
-
-DnsQache is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-DnsQache is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with DnsQache.  If not, see <http://www.gnu.org/licenses/>.
-
-Copyright (c) 2012-2013 Tom Hite
-
-*/
+ * This file is part of DnsQache. DnsQache is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version. DnsQache is distributed in
+ * the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
+ * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+ * the GNU General Public License for more details. You should have received a
+ * copy of the GNU General Public License along with DnsQache. If not, see
+ * <http://www.gnu.org/licenses/>. Copyright (c) 2012-2013 Tom Hite
+ */
 
 package com.tdhite.dnsqache.system;
 
@@ -25,92 +17,85 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.tdhite.dnsqache.QacheService;
 import com.tdhite.dnsqache.R;
 
 public class ConfigManager
 {
 	public static final String TAG = "DNSQACHE -> ConfigManager";
 
-	// the disparate configuration maps
-	private HashMap<String, HashMap<String, String>> mConfigMaps = new HashMap<String, HashMap<String, String>>();
+	private static ConfigManager mSingleton = null;
 
 	// SharedPreferences all live here
 	public static final String PREF_DONATE = "donatepref";
 	public static final String PREF_NOTIFICATION = "notificationpref";
 
-	// Configuration maps in which to place final configuration information
-	private static final String MAP_TINYPROXY = "proxy";
-	private static final String MAP_DNSMASQ = "dnsmasq";
-	private static final String MAP_POLIPO = "polipo";
-	
-	// Configuration maps for use in specifying optional values that may change outside this class.
-	public static final String MAP_DNSMASQ_OPTS = "dnsmasq:opts";
-	public static final String MAP_POLIPO_OPTS = "polipo:opts";
-
-	public static final int DNS_DEFAULT_SPINNER_POSITION = 3;
-	public static final int PROXY_DEFAULT_SPINNER_POSITION = 0;
+	/* dnsqache */
+	public static final String PREF_START_ON_BOOT = "dnsqache.activateQacheOnBoot";
+	public static final boolean PREF_DEFAULT_START_ON_BOOT = false;
+	public static final String PREF_DNS_OLDPRIMARY = "dnsqache.oldPrimary";
+	public static final String PREF_DNS_OLDSECONDARY = "dnsqache.oldSecondary";
 
 	/* dnsmasq */
-	public static final String PREF_DNSMASQ_PRIMARY = "dns.primary";
-	public static final String PREF_DNSMASQ_SECONDARY = "dns.secondary";
-	public static final String PREF_DNSMASQ_CACHESIZE = "cache-size";
+	public static final String PREF_DNSMASQ_PRIMARY = "dnsqache.primary";
 	public static final String PREF_DNSMASQ_DEFAULT_PRIMARY_IP = "208.67.222.222";
+	public static final String PREF_DNSMASQ_SECONDARY = "dnsqache.secondary";
 	public static final String PREF_DNSMASQ_DEFAULT_SECONDARY_IP = "208.67.220.220";
-	public static final String PREF_DNSMASQ_DEFAULT_PORT = "5353";
-	public static final String PREF_DNSMASQ_DEFAULT_CACHE_SIZE = "200";
-	public static final String PREF_DNSMASQ_NEG_TTL = "neg-ttl";
 
-	public static final String PREF_DNSMASQ_INTERFACE = "interface";
-	public static final String PREF_DNSMASQ_DHCP_INTERFACE = "no-dhcp-interface";
-	public static final String PREF_DNSMASQ_BIND_INTERFACES = "bind-interfaces";
-	public static final String PREF_DNSMASQ_PORT = "port";
-	public static final String PREF_DNSMASQ_USER = "user";
-	public static final String PREF_DNSMASQ_LOG_QUERIES = "log-queries";
-	public static final String PREF_DNSMASQ_RESOLV_FILE = "resolv-file";
-	public static final String PREF_DNSMASQ_PID_FILE = "pid-file";
-	public static final String PREF_DNSMASQ_LOG_FACILITY = "log-facility";
-	public static final String PREF_DNSMASQ_TINYPROXY_DNSSEC = "proxy-dnssec";
-	public static final String PREF_DNSMASQ_NO_POLL = "no-poll";
+	public static final String PREF_DNSMASQ_CACHESIZE = "dnsmasq.cache-size";
+	public static final int PREF_DNSMASQ_DEFAULT_CACHE_SIZE = 200;
+	public static final String PREF_DNSMASQ_PORT = "dnsmasq.port";
+	public static final int PREF_DNSMASQ_DEFAULT_PORT = 5353;
+	public static final String PREF_DNSMASQ_LOG_QUERIES = "dnsmasq.log-queries";
+	public static final boolean PREF_DNSMASQ_DEFAULT_LOG_QUERIES = false;
+	public static final String PREF_DNSMASQ_USER = "dnsmasq.user";
+	public static final String PREF_DNSMASQ_NEG_TTL = "dnsmasq.neg-ttl";
+	public static final String PREF_DNSMASQ_INTERFACE = "dnsmasq.interface";
+	public static final String PREF_DNSMASQ_DHCP_INTERFACE = "dnsmasq.no-dhcp-interface";
+	public static final String PREF_DNSMASQ_BIND_INTERFACES = "dnsmasq.bind-interfaces";
+	public static final String PREF_DNSMASQ_RESOLV_FILE = "dnsmasq.resolv-file";
+	public static final String PREF_DNSMASQ_PID_FILE = "dnsmasq.pid-file";
+	public static final String PREF_DNSMASQ_LOG_FACILITY = "dnsmasq.log-facility";
+	public static final String PREF_DNSMASQ_PROXY_DNSSEC = "dnsmasq.proxy-dnssec";
+	public static final String PREF_DNSMASQ_NO_POLL = "dnsmasq.no-poll";
 
-	public static final String PREF_START_ON_BOOT = "activateQacheOnBoot";
-	public static final String PREF_KEEP_REQUEST_COUNT = "keepRequestCount";
-	public static final String PREF_DNS_OLDPRIMARY = "dns.oldPrimary";
-	public static final String PREF_DNS_OLDSECONDARY = "dns.oldSecondary";
-
-	public static final String PREF_UI_DNS_PROVIDER_POSITION = "dns.providerPosition";
-	public static final String PREF_UI_DNS_LOG_QUERIES = "dnsmasq.logQueries";
+	public static final String PREF_UI_DNS_LOG_QUERIES = "dnsmasq.log-queries";
 	public static final String PREF_DNS_PROVIDER = "dns.provider";
 
-	public static final String PREF_UI_PROXY_SPINNER_POSITION = "proxy.position";
+	public static final String PREF_PROXY_TYPE = "proxy.type";
+	public static final String PREF_PROXY_DEFAULT_TYPE = "polipo";
+	public static final String PREF_PROXY_ACTIVATE = "proxy.activate";
+	public static boolean PREF_PROXY_DEFAULT_ACTIVATE = false;
 
 	public static final String DNSMASQ_BINARY = "dnsqache";
 
 	/* tinyproxy */
 	public static final String TINYPROXY_BINARY = "tinyproxy";
 
-	public static final String PREF_TINYPROXY_PORT = "Port";
+	public static final String PREF_TINYPROXY_PORT = "tinyproxy.Port";
 	public static final String PREF_TINYPROXY_DEFAULT_PORT = "3128";
-	public static final String PREF_TINYPROXY_TIMEOUT = "TimeOut";
+	public static final String PREF_TINYPROXY_TIMEOUT = "tinyproxy.TimeOut";
 	public static final String PREF_TINYPROXY_DEFAULT_TIMEOUT = "600";
-	public static final String PREF_TINYPROXY_DEFAULTERRORFILE = "DefaultErrorFile";
-	public static final String PREF_TINYPROXY_STATHOST = "StatHost";
-	public static final String PREF_TINYPROXY_LOGFILE = "LogFile";
-	public static final String PREF_TINYPROXY_LOGLEVEL = "LogLevel";
-	public static final String PREF_TINYPROXY_PID_FILE = "PidFile";
-	public static final String PREF_TINYPROXY_MAXCLIENTS = "MaxClients";
-	public static final String PREF_TINYPROXY_MINSPARESERVERS = "MinSpareServers";
-	public static final String PREF_TINYPROXY_MAXSPARESERVERS = "MaxSpareServers";
-	public static final String PREF_TINYPROXY_STARTSERVERS = "StartServers";
-	public static final String PREF_TINYPROXY_MAXREQUESTSPERCHILD = "MaxRequestsPerChild";
-	public static final String PREF_TINYPROXY_ALLOW = "Allow";
-	public static final String PREF_TINYPROXY_VIAPROXYNAME = "ViaProxyName";
+	public static final String PREF_TINYPROXY_DEFAULTERRORFILE = "tinyproxy.DefaultErrorFile";
+	public static final String PREF_TINYPROXY_LOGFILE = "tinyproxy.LogFile";
+	public static final String PREF_TINYPROXY_LOGLEVEL = "tinyproxy.LogLevel";
+	public static final String PREF_TINYPROXY_PID_FILE = "tinyproxy.PidFile";
+	public static final String PREF_TINYPROXY_MAXCLIENTS = "tinyproxy.MaxClients";
+	public static final String PREF_TINYPROXY_MINSPARESERVERS = "tinyproxy.MinSpareServers";
+	public static final String PREF_TINYPROXY_MAXSPARESERVERS = "tinyproxy.MaxSpareServers";
+	public static final String PREF_TINYPROXY_STARTSERVERS = "tinyproxy.StartServers";
+	public static final String PREF_TINYPROXY_MAXREQUESTSPERCHILD = "tinyproxy.MaxRequestsPerChild";
+	public static final String PREF_TINYPROXY_ALLOW = "tinyproxy.Allow";
+	public static final String PREF_TINYPROXY_VIAPROXYNAME = "tinyproxy.ViaProxyName";
 
 	public static final String[] mProxyHtmlFiles = new String[]
 		{
@@ -119,14 +104,13 @@ public class ConfigManager
 
 	/* polipo */
 	public static final String POLIPO_BINARY = "polipo";
-	public static final String PREF_POLIPO_ALLOWED_CIDRS = "allowed_cidrs";
+	public static final String PREF_POLIPO_ALLOWED_CIDRS = "polipo.allowed_cidrs";
 	public static final String PREF_POLIPO_DEFAULT_ALLOWED_CIDRS = "172.20.21.0/24";
 
 	/*
 	 * Where this application stores its data.
 	 */
 	private String mDataFileDir = "./";
-	private boolean mInitialized = false;
 
 	/*
 	 * Where the config file lives (relative to the dataFilePath).
@@ -135,19 +119,35 @@ public class ConfigManager
 	private static String mResolvFile = "resolv.dnsmasq";
 
 	/*************************************************************************
-	 * Private methods
+	 * Singleton manager
 	 ************************************************************************/
-	private HashMap<String, String> getMap(String mapName)
+	private ConfigManager()
 	{
-		HashMap<String, String> map = this.mConfigMaps.get(mapName);
-		if (map == null)
-		{
-			map = new HashMap<String, String>();
-			this.mConfigMaps.put(mapName, map);
-		}
-		return map;
+		super();
 	}
 
+	public static ConfigManager getConfigManager()
+	{
+		if (ConfigManager.mSingleton == null)
+		{
+			ConfigManager.mSingleton = new ConfigManager();
+		}
+		return ConfigManager.mSingleton;
+	}
+
+	/*************************************************************************
+	 * Configuration UI support
+	 ************************************************************************/
+	public static boolean validateIpAddress(Context ctx, String newIpAddress)
+	{
+		final Pattern IP_PATTERN = Pattern
+				.compile("(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])");
+		return IP_PATTERN.matcher(newIpAddress).matches();
+	}
+
+	/*************************************************************************
+	 * Private methods
+	 ************************************************************************/
 	private String quotedString(String inString)
 	{
 		StringBuilder s = new StringBuilder();
@@ -318,28 +318,75 @@ public class ConfigManager
 		return msg;
 	}
 
-	private boolean commitMap(Context context, String mapName, String confFile,
-			String separator)
+	private boolean commitConfigFiles(Context context)
 	{
-		HashMap<String, String> map = this.getMap(mapName);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		boolean ret = false;
-		String lines = new String();
+		StringBuilder[] lines = new StringBuilder[]
+			{
+					new StringBuilder(), new StringBuilder(),
+					new StringBuilder()
+			};
 
+		int fileIndex = -1;
+		String separator = null;
+		String fileKey = null;
+
+		Map<String, ?> map = prefs.getAll();
 		for (String key : map.keySet())
 		{
-			String value = map.get(key);
-			if (value == null)
+			Object value = map.get(key);
+
+			if (key.startsWith("dnsmasq."))
 			{
-				lines += key;
+				fileIndex = 0;
+				separator = "=";
+				fileKey = key.substring("dnsmasq.".length());
 			}
-			else
+			else if (key.startsWith("polipo."))
 			{
-				lines += key + separator + map.get(key);
+				fileIndex = 1;
+				separator = "=";
+				fileKey = key.substring("polipo.".length());
 			}
-			lines += "\n";
+			else if (key.startsWith("tinyproxy."))
+			{
+				fileIndex = 2;
+				separator = " ";
+				fileKey = key.substring("tinyproxy.".length());
+			}
+
+			if (fileIndex >= 0)
+			{
+				try
+				{
+					if (fileIndex == 0 && value instanceof Boolean)
+					{
+						if (((Boolean) value).booleanValue())
+						{
+							lines[fileIndex].append(fileKey);
+						}
+					}
+					else
+					{
+						lines[fileIndex].append(fileKey);
+						lines[fileIndex].append(separator);
+						lines[fileIndex].append(value);
+					}
+					lines[fileIndex].append("\n");
+				}
+				catch (Exception e)
+				{
+					Log.e(TAG, "Error in commit(" + key + "," + fileKey + "):", e);
+				}
+			}
+
+			fileIndex = -1;
 		}
 
-		ret = CoreTask.writeLinesToFile(confFile, lines);
+		ret = CoreTask.writeLinesToFile(getDnsqacheConfigFile(), lines[0].toString());
+		ret = CoreTask.writeLinesToFile(getPolipoConfigFile(), lines[1].toString());
+		ret = CoreTask.writeLinesToFile(getTinyProxyConfigFile(), lines[2].toString());
 
 		return ret;
 	}
@@ -405,236 +452,172 @@ public class ConfigManager
 		Log.d(TAG, message);
 	}
 
-	private boolean initializePolipo(Context context)
+	private void initializePolipo(SharedPreferences prefs, Editor editor)
 	{
-		boolean bInitialized = mInitialized;
-
-		// in all cases, turn on or off specific UI options
-		SharedPreferences sharedPrefs = PreferenceManager
-				.getDefaultSharedPreferences(context);
-		HashMap<String, String> map = this.getMap(MAP_POLIPO);
-		HashMap<String, String> optsMap = this.getMap(MAP_POLIPO_OPTS);
-		String optCIDRs = optsMap.get(PREF_POLIPO_ALLOWED_CIDRS);
-		if (optCIDRs == null)
+		if (!prefs.contains("polipo.logFile"))
 		{
-			optCIDRs = sharedPrefs.getString(PREF_POLIPO_ALLOWED_CIDRS,
-					PREF_POLIPO_DEFAULT_ALLOWED_CIDRS);
-		}
-		map.put("allowedClients", "127.0.0.1, " + optCIDRs);
-
-		// add the rest if not already initialized
-		if (!bInitialized)
-		{
-			map.put("allowUnalignedRangeRequests", "false");
-			map.put("allowedPorts", "1-65535");
-			map.put("daemonise", "true");
-			map.put("disableVia", "true");
-			map.put("displayName", "Polipo");
-			map.put("laxHttpParser", "true");
-			map.put("logSyslog", "false");
-			map.put("logFile", quotedString(this.getPolipoLogFile()));
-			map.put("pidFile", quotedString(this.getPolipoPidFile()));
-			map.put("proxyAddress", "0.0.0.0");
-			map.put("proxyPort", "3128");
-			map.put("proxyName", "localhost");
-			map.put("cacheIsShared", "false");
-			map.put("disableLocalInterface", "false");
-			map.put("disableConfiguration", "false");
-			map.put("dnsUseGethostbyname", "yes");
-			map.put("maxConnectionAge", "5m");
-			map.put("maxConnectionRequests", "120");
-			map.put("serverMaxSlots", "8");
-			map.put("serverSlots", "2");
-			bInitialized = true;
+			editor.putString("polipo.logFile", quotedString(this.getPolipoLogFile()));
 		}
 
-		return bInitialized;
+		if (!prefs.contains("polipo.pidFile"))
+		{
+			editor.putString("polipo.pidFile", quotedString(this.getPolipoPidFile()));
+		}
+
+		if (!prefs.contains("polipo.disableLocalInterface"))
+		{
+			editor.putBoolean("dpolipo.isableLocalInterface", false);
+		}
+		if (!prefs.contains("polipo.disableConfiguration"))
+		{
+			editor.putBoolean("polipo.disableConfiguration", false);
+		}
+
+		if (!prefs.contains("polipo.dnsUseGethostbyname"))
+		{
+			editor.putString("polipo.dnsUseGethostbyname", "yes");
+		}
 	}
 
-	private boolean initializeTinyProxy(Context context)
+	private void initializeTinyProxy(SharedPreferences prefs, Editor editor)
 	{
-		boolean bInitialized = mInitialized;
-
-		if (!bInitialized)
+		if (!prefs.contains(PREF_TINYPROXY_DEFAULTERRORFILE))
 		{
-			HashMap<String, String> proxyMap = this.getMap(MAP_TINYPROXY);
-			proxyMap.put(PREF_TINYPROXY_PORT, PREF_TINYPROXY_DEFAULT_PORT);
-			proxyMap.put(PREF_TINYPROXY_TIMEOUT, PREF_TINYPROXY_DEFAULT_TIMEOUT);
-			proxyMap.put(PREF_TINYPROXY_DEFAULTERRORFILE,
+			editor.putString(PREF_TINYPROXY_DEFAULTERRORFILE,
 					quotedString(this.getTinyProxyErrorFile()));
-			proxyMap.put(PREF_TINYPROXY_STATHOST,
+		}
+
+		if (!prefs.contains(PREF_TINYPROXY_DEFAULTERRORFILE))
+		{
+			editor.putString(PREF_TINYPROXY_DEFAULTERRORFILE,
 					quotedString("tinyproxy.stats"));
-			proxyMap.put(PREF_TINYPROXY_LOGFILE,
+		}
+
+		if (!prefs.contains(PREF_TINYPROXY_LOGFILE))
+		{
+			editor.putString(PREF_TINYPROXY_LOGFILE,
 					quotedString(this.getTinyProxyLogFile()));
-			proxyMap.put(PREF_TINYPROXY_LOGLEVEL, "Connect");
-			proxyMap.put(PREF_TINYPROXY_PID_FILE,
+		}
+
+		if (!prefs.contains(PREF_TINYPROXY_PID_FILE))
+		{
+			editor.putString(PREF_TINYPROXY_PID_FILE,
 					quotedString(this.getTinyProxyPidFile()));
-			proxyMap.put(PREF_TINYPROXY_MAXCLIENTS, "100");
-			proxyMap.put(PREF_TINYPROXY_MINSPARESERVERS, "5");
-			proxyMap.put(PREF_TINYPROXY_MAXSPARESERVERS, "20");
-			proxyMap.put(PREF_TINYPROXY_STARTSERVERS, "10");
-			proxyMap.put(PREF_TINYPROXY_MAXREQUESTSPERCHILD, "0");
-			// proxyMap.put(PREF_TINYPROXY_ALLOW + "1", "127.0.0.1");
-			// proxyMap.put(PREF_TINYPROXY_ALLOW + "2", "172.16.0.12/12");
-			// proxyMap.put(PREF_TINYPROXY_ALLOW + "3", "192.168.0.0/16");
-			proxyMap.put(PREF_TINYPROXY_VIAPROXYNAME, quotedString("DnsQache"));
-			bInitialized = true;
 		}
-
-		return bInitialized;
 	}
 
-	private boolean initializeDnsmasq(Context context)
+	private void initializeDnsmasq(SharedPreferences prefs, Editor editor)
 	{
-		HashMap<String, String> dnsmasqMap = this.getMap(MAP_DNSMASQ);
-		boolean bInitialized = mInitialized;
-
-		// in all cases, turn on or off specific UI options
-		SharedPreferences sharedPrefs = PreferenceManager
-				.getDefaultSharedPreferences(context);
-		boolean bLogQueries = sharedPrefs.getBoolean(PREF_UI_DNS_LOG_QUERIES,
-				false);
-		if (bLogQueries)
+		if (!prefs.contains(PREF_DNSMASQ_PRIMARY))
 		{
-			dnsmasqMap.put(PREF_DNSMASQ_LOG_QUERIES, null);
-		}
-		else
-		{
-			dnsmasqMap.remove(PREF_DNSMASQ_LOG_QUERIES);
+			editor.putString(PREF_DNSMASQ_PRIMARY, PREF_DNSMASQ_DEFAULT_PRIMARY_IP);
 		}
 
-		HashMap<String, String> optionsMap = this.getMap(MAP_DNSMASQ_OPTS);
-		String maxCacheSize = optionsMap.get(PREF_DNSMASQ_CACHESIZE);
-		if (maxCacheSize == null)
+		if (!prefs.contains(PREF_DNSMASQ_SECONDARY))
 		{
-			maxCacheSize = sharedPrefs.getString(PREF_DNSMASQ_CACHESIZE,
-							PREF_DNSMASQ_DEFAULT_CACHE_SIZE);
-			optionsMap.put(PREF_DNSMASQ_CACHESIZE, maxCacheSize);
-		}
-		dnsmasqMap.put(PREF_DNSMASQ_CACHESIZE, maxCacheSize);
-
-		// dnsmasqMap.put(PREF_DNSMASQ_LOG_FACILITY,
-		// this.getLogFile());
-
-		// Add the rest
-		if (!bInitialized)
-		{
-			/* get the dnsmasq prefs table */
-			dnsmasqMap.put(PREF_DNSMASQ_INTERFACE, "lo");
-			dnsmasqMap.put(PREF_DNSMASQ_DHCP_INTERFACE, "lo");
-			dnsmasqMap.put(PREF_DNSMASQ_USER, "root");
-			dnsmasqMap.put(PREF_DNSMASQ_PORT, PREF_DNSMASQ_DEFAULT_PORT);
-			dnsmasqMap.put(PREF_DNSMASQ_PID_FILE, this.getDnsmasqPidFile());
-			dnsmasqMap.put(PREF_DNSMASQ_RESOLV_FILE, this.getResolvFile());
-			dnsmasqMap.put(PREF_DNSMASQ_BIND_INTERFACES, null);
-			dnsmasqMap.put(PREF_DNSMASQ_TINYPROXY_DNSSEC, null);
-			dnsmasqMap.put(PREF_DNSMASQ_NEG_TTL, "3600");
-			dnsmasqMap.put(PREF_DNSMASQ_NO_POLL, null);
-
-			// Check if binaries need updates
-			if (!binariesExist())
-			{
-				if (CoreTask.hasRootPermission())
-				{
-					installFiles(context);
-				}
-			}
-
-			bInitialized = true;
+			editor.putString(PREF_DNSMASQ_PRIMARY, PREF_DNSMASQ_DEFAULT_SECONDARY_IP);
 		}
 
-		return bInitialized;
+		if (!prefs.contains(PREF_DNSMASQ_INTERFACE))
+		{
+			editor.putString(PREF_DNSMASQ_INTERFACE, "lo");
+		}
+
+		if (!prefs.contains(PREF_DNSMASQ_DHCP_INTERFACE))
+		{
+			editor.putString(PREF_DNSMASQ_DHCP_INTERFACE, "lo");
+		}
+
+		if (!prefs.contains(PREF_DNSMASQ_USER))
+		{
+			editor.putString(PREF_DNSMASQ_USER, "root");
+		}
+
+		if (!prefs.contains(PREF_DNSMASQ_PID_FILE))
+		{
+			editor.putString(PREF_DNSMASQ_PID_FILE, this.getDnsmasqPidFile());
+		}
+
+		if (!prefs.contains(PREF_DNSMASQ_RESOLV_FILE))
+		{
+			editor.putString(PREF_DNSMASQ_RESOLV_FILE, this.getResolvFile());
+		}
+
+		if (!prefs.contains(PREF_DNSMASQ_BIND_INTERFACES))
+		{
+			editor.putBoolean(PREF_DNSMASQ_BIND_INTERFACES, true);
+		}
+
+		if (!prefs.contains(PREF_DNSMASQ_PROXY_DNSSEC))
+		{
+			editor.putBoolean(PREF_DNSMASQ_PROXY_DNSSEC, true);
+		}
+
+		if (!prefs.contains(PREF_DNSMASQ_NEG_TTL))
+		{
+			editor.putString(PREF_DNSMASQ_NEG_TTL, "3600");
+		}
+
+		if (!prefs.contains(PREF_DNSMASQ_NO_POLL))
+		{
+			editor.putBoolean(PREF_DNSMASQ_NO_POLL, true);
+		}
 	}
 
-	private boolean writeResolvConf(String primary, String secondary)
+	private boolean writeResolvConf(Context context)
 	{
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		String primary = prefs.getString(PREF_DNSMASQ_PRIMARY,
+				ConfigManager.PREF_DNSMASQ_DEFAULT_PRIMARY_IP);
+		String secondary = prefs.getString(PREF_DNSMASQ_SECONDARY,
+				ConfigManager.PREF_DNSMASQ_DEFAULT_SECONDARY_IP);
 		String lines = "nameserver " + primary + "\nnameserver " + secondary
 				+ "\n";
 		return CoreTask.writeLinesToFile(this.getResolvFile(), lines);
 	}
 
-	private void readConfigFile(Context context, String mapName,
-			String filename, String separator)
+	private boolean commit(Context context)
 	{
-		HashMap<String, String> map = this.getMap(mapName);
+		// set all values from the preferences file
+		PreferenceManager.setDefaultValues(context, R.xml.preferences, false);
 
-		// clear out any old thoughts of configuration
-		map.clear();
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		Editor editor = prefs.edit();
 
-		// read the configuration
-		for (String line : CoreTask.readLinesFromFile(filename))
+		// Add any other not destined for user input
+		this.initializePolipo(prefs, editor);
+		this.initializeTinyProxy(prefs, editor);
+		this.initializeDnsmasq(prefs, editor);
+
+		if (!binariesExist())
 		{
-			if (line.startsWith("#"))
-				continue;
-
-			if (line.contains(separator))
+			if (CoreTask.hasRootPermission())
 			{
-				String[] data = line.split(separator);
-				if (data.length > 1)
-				{
-					map.put(data[0], data[1]);
-				}
-				else
-				{
-					map.put(data[0], "");
-				}
-			}
-			else
-			{
-				map.put(line, null);
+				installFiles(context);
 			}
 		}
-	}
 
-	private void readDnsmasqConfigFile(Context context)
-	{
-		String filename = this.getDnsqacheConfigFile();
-		this.readConfigFile(context, MAP_DNSMASQ, filename, "=");
+		editor.commit();
 
-		// in all cases, turn on or off specific UI options
-		SharedPreferences sharedPrefs = PreferenceManager
-				.getDefaultSharedPreferences(context);
-		HashMap<String, String> dnsmasqMap = this.getMap(MAP_DNSMASQ);
-		boolean bLogQueries = sharedPrefs.getBoolean(PREF_UI_DNS_LOG_QUERIES,
-				false);
-		if (bLogQueries)
-			dnsmasqMap.put(PREF_DNSMASQ_LOG_QUERIES, null);
-		else
-			dnsmasqMap.remove(PREF_DNSMASQ_LOG_QUERIES);
-	}
-
-	private void readTinyProxyConfigFile(Context context)
-	{
-		String filename = this.getTinyProxyConfigFile();
-		this.readConfigFile(context, MAP_TINYPROXY, filename, " ");
-	}
-
-	private void readPolipoConfigFile(Context context)
-	{
-		String filename = this.getPolipoConfigFile();
-		this.readConfigFile(context, MAP_POLIPO, filename, "=");
-	}
-
-	private void readConfigs(Context context)
-	{
-		this.readDnsmasqConfigFile(context);
-		this.readTinyProxyConfigFile(context);
-		this.readPolipoConfigFile(context);
+		return this.commitConfigFiles(context) && this.writeResolvConf(context);
 	}
 
 	/*************************************************************************
 	 * Public methods
 	 ************************************************************************/
-	public void put(String mapName, String valueKey, String value)
+	public static int getResourceId(Context ctx, String resourceName,
+			String resourceType)
 	{
-		HashMap<String, String> map = this.getMap(mapName);
-		map.put(valueKey, value);
-	}
-
-	public String get(String mapName, String valueKey)
-	{
-		HashMap<String, String> map = this.getMap(mapName);
-		return map.get(valueKey);
+		try
+		{
+			return ctx.getResources().getIdentifier(resourceName, resourceType,
+					ctx.getPackageName());
+		}
+		catch (Exception e)
+		{
+			Log.e(TAG, "getResourceId", e);
+			return -1;
+		}
 	}
 
 	public final String getDataDir()
@@ -662,25 +645,6 @@ public class ConfigManager
 		return this.getConfigDir() + mDnsmasqConfigFile;
 	}
 
-	public boolean commit(Context context)
-	{
-		HashMap<String, String> serverMap = this.getMap(MAP_DNSMASQ_OPTS);
-
-		// Initialize the maps
-		mInitialized = this.initializeDnsmasq(context)
-				&& this.initializeTinyProxy(context)
-				&& this.initializePolipo(context);
-
-		return this.commitMap(context, MAP_DNSMASQ,
-				this.getDnsqacheConfigFile(), "=")
-				&& this.commitMap(context, MAP_TINYPROXY,
-						this.getTinyProxyConfigFile(), " ")
-				&& this.commitMap(context, MAP_POLIPO,
-						this.getPolipoConfigFile(), "=")
-				&& this.writeResolvConf(serverMap.get(PREF_DNSMASQ_PRIMARY),
-						serverMap.get(PREF_DNSMASQ_SECONDARY));
-	}
-
 	public String getResolvFile()
 	{
 		return this.getConfigDir() + mResolvFile;
@@ -696,12 +660,6 @@ public class ConfigManager
 		{
 			this.mDataFileDir = path;
 		}
-
-		// assure an uninitialized state since new config dir
-		mInitialized = false;
-
-		// reinitialize based on configurations in the new path
-		this.readConfigs(context);
 	}
 
 	public String getBinaryFullPath(String binary)
@@ -764,19 +722,66 @@ public class ConfigManager
 		return this.getVarDir() + POLIPO_BINARY + ".log";
 	}
 
-	public String[] getDNSServers()
+	public String[] getDNSServers(Context ctx)
 	{
-		HashMap<String, String> serverMap = this.getMap(MAP_DNSMASQ_OPTS);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
 		String dnsServers[] = new String[]
 			{
-					serverMap.get(PREF_DNSMASQ_PRIMARY),
-					serverMap.get(PREF_DNSMASQ_SECONDARY)
+				prefs.getString(PREF_DNSMASQ_PRIMARY, PREF_DNSMASQ_DEFAULT_PRIMARY_IP),
+				prefs.getString(PREF_DNSMASQ_SECONDARY, PREF_DNSMASQ_DEFAULT_SECONDARY_IP)
 			};
 		return dnsServers;
 	}
 
-	public HashMap<String, String> getOptionsMap(String mapName)
+	public void updateDNSConfiguration(Context ctx, String primaryDns,
+			String secondaryDns, int cacheSize)
 	{
-		return this.getMap(mapName);
+		long startStamp = System.currentTimeMillis();
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+		Editor editor = prefs.edit();
+
+		// the number seven is just because 1.1.1.1 is seven chars, eh?
+		if (primaryDns == null || !ConfigManager.validateIpAddress(ctx, primaryDns))
+		{
+			primaryDns = ConfigManager.PREF_DNSMASQ_DEFAULT_PRIMARY_IP;
+		}
+
+		if (secondaryDns == null || !ConfigManager.validateIpAddress(ctx, secondaryDns))
+		{
+			secondaryDns = ConfigManager.PREF_DNSMASQ_DEFAULT_SECONDARY_IP;
+		}
+
+		if (cacheSize < 0)
+		{
+			cacheSize = ConfigManager.PREF_DNSMASQ_DEFAULT_CACHE_SIZE;
+		}
+
+		// put the values into the config manager
+		editor.putString(PREF_DNSMASQ_PRIMARY, primaryDns);
+		editor.putString(PREF_DNSMASQ_SECONDARY, secondaryDns);
+		editor.putString(PREF_DNSMASQ_CACHESIZE, "" + cacheSize);
+
+		// writing the configs
+		if (this.commit(ctx))
+		{
+			Log.d(TAG,
+					"Creation of configuration-files took ==> "
+							+ (System.currentTimeMillis() - startStamp)
+							+ " milliseconds.");
+			QacheService svc = QacheService.getSingleton();
+			if (svc != null)
+			{
+				svc.setDns();
+			}
+		}
+		else
+		{
+			Log.e(TAG, "Unable to update configuration preferences!");
+		}
+	}
+
+	public void updateDNSConfiguration(Context ctx)
+	{
+		this.updateDNSConfiguration(ctx, null, null, -1);
 	}
 }
