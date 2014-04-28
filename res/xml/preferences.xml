@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" android:orderingFromXml="true">
 	<PreferenceCategory android:title="General" android:summary="Settings for the DnsQache Application.">
-	    <CheckBoxPreference android:key="dnsqache.activatQacheOnBoot" android:summary="Start DnsQache when the device boots." android:title="@string/activateonboot" android:defaultValue="false"/>
+	    <CheckBoxPreference android:key="dnsqache.activateQacheOnBoot" android:summary="Start DnsQache when the device boots." android:title="@string/activateonboot" android:defaultValue="false"/>
 	</PreferenceCategory>
 	<PreferenceCategory
 	   android:summary="Settings to tune DNS host name caching."
