@@ -6,7 +6,6 @@ import com.tdhite.dnsqache.system.ConfigManager;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -33,7 +32,7 @@ public class PrefsActivity extends Activity
 	public static class PrefsFragment extends PreferenceFragment implements
 			OnSharedPreferenceChangeListener
 	{
-		private static final String TAG = "DNSQACHE -> ConfigManager";
+		private static final String TAG = "DNSQACHE -> PrefsFragment";
 
 		@Override
 		public void onCreate(Bundle savedInstanceState)
@@ -70,8 +69,8 @@ public class PrefsActivity extends Activity
 		public void onSharedPreferenceChanged(
 				SharedPreferences sharedPreferences, String key)
 		{
-			//update summary  
-		   updatePrefsSummary(sharedPreferences, findPreference(key));
+			//update summary
+			updatePrefsSummary(sharedPreferences, findPreference(key));
 		}
 
 		/**
@@ -129,11 +128,11 @@ public class PrefsActivity extends Activity
 
 				if (pref.getKey().equals(ConfigManager.PREF_DNS_PROVIDER))
 				{
-					updateDnsProviders(listPref);
+					updateDnsProviders(sharedPreferences, listPref);
 				}
 				else if (pref.getKey().equals(ConfigManager.PREF_DNSMASQ_CACHESIZE))
 				{
-					updateDnsCacheSize(listPref);
+					updateDnsCacheSize(sharedPreferences, listPref);
 				}
 			}
 			else if (pref instanceof EditTextPreference)
@@ -170,8 +169,8 @@ public class PrefsActivity extends Activity
 				mlistPref.setSummary(summaryMListPref);
 			}
 		}
-		
-		private void updateDnsProviders(ListPreference listPref)
+
+		private void updateDnsProviders(SharedPreferences prefs, ListPreference listPref)
 		{
 			Activity ctx = this.getActivity();
 			int id = ConfigManager.getResourceId(ctx, listPref.getValue(),
@@ -181,34 +180,25 @@ public class PrefsActivity extends Activity
 				try
 				{
 					String[] providers = ctx.getResources().getStringArray(id);
-					Editor editor = this.getPreferenceManager()
-							.getSharedPreferences().edit();
-					editor.putString(ConfigManager.PREF_DNSMASQ_PRIMARY,
-							providers[0]);
-					editor.putString(ConfigManager.PREF_DNSMASQ_SECONDARY,
-							providers[1]);
-					editor.commit();
 					ConfigManager.getConfigManager().updateDNSConfiguration(
-							ctx, providers[0], providers[1], -1);
+							ctx, prefs, providers[0], providers[1], -1);
 				}
 				catch (Resources.NotFoundException e)
 				{
-					Log.e(TAG, "updateDnsProviders trying id: " + id, e);
+					Log.e(TAG, "updateDnsProviders failed on string array id: " + id, e);
 				}
 			}
 			else
 			{
-				Log.e(TAG, "updateDnsProviders: id was " + id);
+				Log.e(TAG, "updateDnsProviders: string array id not found: " + id);
 			}
 		}
 
-		private void updateDnsCacheSize(ListPreference listPref)
+		private void updateDnsCacheSize(SharedPreferences prefs, ListPreference listPref)
 		{
 			Activity ctx = this.getActivity();
 			int size = -1;
 			String value = listPref.getValue();
-			Editor editor = this.getPreferenceManager()
-					.getSharedPreferences().edit();
 
 			try
 			{
@@ -216,13 +206,11 @@ public class PrefsActivity extends Activity
 			}
 			catch(NumberFormatException e)
 			{
-				Log.e(TAG, "updateDnsCacheSize: value was " + value, e);
+				Log.e(TAG, "updateDnsCacheSize: invalid value: " + value, e);
 				size = ConfigManager.PREF_DNSMASQ_DEFAULT_CACHE_SIZE;
 			}
 
-			editor.putString(ConfigManager.PREF_DNSMASQ_CACHESIZE, "" + size);
-			editor.commit();
-			ConfigManager.getConfigManager().updateDNSConfiguration(ctx, null,
+			ConfigManager.getConfigManager().updateDNSConfiguration(ctx, prefs, null,
 					null, size);
 		}
 	}

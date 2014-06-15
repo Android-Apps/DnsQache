@@ -462,8 +462,8 @@ public class QacheService extends Service
 			public void run()
 			{
 				// Generate configuration
-				ConfigManager.getConfigManager().updateDNSConfiguration(
-								QacheService.this.mQacheApplication);
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(QacheService.this.mQacheApplication);
+				ConfigManager.getConfigManager().updateDNSConfiguration(QacheService.this.mQacheApplication, prefs, null, null, -1);
 
 				// Start the dnsmasq daemon
 				QacheService.this.startDaemons();
@@ -536,8 +536,8 @@ public class QacheService extends Service
 				QacheService.this.stopDaemons();
 
 				// Generate configuration
-				ConfigManager.getConfigManager().updateDNSConfiguration(
-						mQacheApplication);
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mQacheApplication);
+				ConfigManager.getConfigManager().updateDNSConfiguration(mQacheApplication, prefs, null, null, -1);
 
 				// Start the dns cache daemon
 				QacheService.this.startDaemons();

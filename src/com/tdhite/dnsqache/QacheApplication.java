@@ -68,7 +68,8 @@ public class QacheApplication extends Application
 				MainActivity.class), 0);
 
 		// Initialize configuration
-		ConfigManager.getConfigManager().updateDNSConfiguration(this);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		ConfigManager.getConfigManager().updateDNSConfiguration(this, prefs, null, null, -1);
 	}
 
 	@Override

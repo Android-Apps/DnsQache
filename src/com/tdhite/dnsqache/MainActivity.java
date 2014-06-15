@@ -204,6 +204,10 @@ public class MainActivity extends Activity
 			startQache();
 		else
 			stopQache();
+		
+		// set the text to the next available user action
+		setTextViewText(R.id.text_qache_start, toggle.isChecked());
+
 	}
 
 	@Override

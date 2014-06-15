@@ -69,7 +69,7 @@ public class ConfigManager
 	public static final String PREF_DNSMASQ_NO_POLL = "dnsmasq.no-poll";
 
 	public static final String PREF_UI_DNS_LOG_QUERIES = "dnsmasq.log-queries";
-	public static final String PREF_DNS_PROVIDER = "dns.provider";
+	public static final String PREF_DNS_PROVIDER = "dnsqache.provider";
 
 	public static final String PREF_PROXY_TYPE = "proxy.type";
 	public static final String PREF_PROXY_DEFAULT_TYPE = "polipo";
@@ -142,7 +142,11 @@ public class ConfigManager
 	{
 		final Pattern IP_PATTERN = Pattern
 				.compile("(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])");
-		return IP_PATTERN.matcher(newIpAddress).matches();
+		boolean b = IP_PATTERN.matcher(newIpAddress).matches();
+		if (!b) {
+			Log.w(TAG, "IP Address not valid: \"" + newIpAddress + "\"");
+		}
+		return b;
 	}
 
 	/*************************************************************************
@@ -318,9 +322,8 @@ public class ConfigManager
 		return msg;
 	}
 
-	private boolean commitConfigFiles(Context context)
+	private boolean commitConfigFiles(Context context, SharedPreferences prefs)
 	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		boolean ret = false;
 		StringBuilder[] lines = new StringBuilder[]
 			{
@@ -511,11 +514,13 @@ public class ConfigManager
 		if (!prefs.contains(PREF_DNSMASQ_PRIMARY))
 		{
 			editor.putString(PREF_DNSMASQ_PRIMARY, PREF_DNSMASQ_DEFAULT_PRIMARY_IP);
+			Log.i(TAG, "Updated primary DNS to default: " + PREF_DNSMASQ_DEFAULT_PRIMARY_IP);
 		}
 
 		if (!prefs.contains(PREF_DNSMASQ_SECONDARY))
 		{
 			editor.putString(PREF_DNSMASQ_SECONDARY, PREF_DNSMASQ_DEFAULT_SECONDARY_IP);
+			Log.i(TAG, "Updated secondary DNS to default: " + PREF_DNSMASQ_DEFAULT_SECONDARY_IP);
 		}
 
 		if (!prefs.contains(PREF_DNSMASQ_INTERFACE))
@@ -564,30 +569,31 @@ public class ConfigManager
 		}
 	}
 
-	private boolean writeResolvConf(Context context)
+	private boolean writeResolvConf(Context context, SharedPreferences prefs)
 	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		String primary = prefs.getString(PREF_DNSMASQ_PRIMARY,
 				ConfigManager.PREF_DNSMASQ_DEFAULT_PRIMARY_IP);
 		String secondary = prefs.getString(PREF_DNSMASQ_SECONDARY,
 				ConfigManager.PREF_DNSMASQ_DEFAULT_SECONDARY_IP);
-		String lines = "nameserver " + primary + "\nnameserver " + secondary
-				+ "\n";
-		return CoreTask.writeLinesToFile(this.getResolvFile(), lines);
+		StringBuffer lines = new StringBuffer();
+		lines.append("nameserver ");
+		lines.append(primary);
+		lines.append("\nnameserver ");
+		lines.append(secondary);
+		lines.append("\n");
+		return CoreTask.writeLinesToFile(this.getResolvFile(), lines.toString());
 	}
 
-	private boolean commit(Context context)
+	private boolean commit(Context context, SharedPreferences prefs, Editor editor)
 	{
 		// set all values from the preferences file
 		PreferenceManager.setDefaultValues(context, R.xml.preferences, false);
-
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-		Editor editor = prefs.edit();
 
 		// Add any other not destined for user input
 		this.initializePolipo(prefs, editor);
 		this.initializeTinyProxy(prefs, editor);
 		this.initializeDnsmasq(prefs, editor);
+		editor.apply();
 
 		if (!binariesExist())
 		{
@@ -597,9 +603,7 @@ public class ConfigManager
 			}
 		}
 
-		editor.commit();
-
-		return this.commitConfigFiles(context) && this.writeResolvConf(context);
+		return this.commitConfigFiles(context, prefs) && this.writeResolvConf(context, prefs);
 	}
 
 	/*************************************************************************
@@ -733,36 +737,43 @@ public class ConfigManager
 		return dnsServers;
 	}
 
-	public void updateDNSConfiguration(Context ctx, String primaryDns,
+	public void updateDNSConfiguration(Context ctx, SharedPreferences prefs, String primaryDns,
 			String secondaryDns, int cacheSize)
 	{
 		long startStamp = System.currentTimeMillis();
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
 		Editor editor = prefs.edit();
 
 		// the number seven is just because 1.1.1.1 is seven chars, eh?
-		if (primaryDns == null || !ConfigManager.validateIpAddress(ctx, primaryDns))
-		{
+		if (primaryDns == null) {
+			primaryDns = prefs.getString(PREF_DNSMASQ_PRIMARY, PREF_DNSMASQ_DEFAULT_PRIMARY_IP);
+		}
+		if (!ConfigManager.validateIpAddress(ctx, primaryDns)) {
 			primaryDns = ConfigManager.PREF_DNSMASQ_DEFAULT_PRIMARY_IP;
 		}
+		editor.putString(PREF_DNSMASQ_PRIMARY, primaryDns);
+		Log.i(TAG, "Updated primary DNS to: " + primaryDns);
 
-		if (secondaryDns == null || !ConfigManager.validateIpAddress(ctx, secondaryDns))
+		if (secondaryDns == null) {
+			secondaryDns = prefs.getString(PREF_DNSMASQ_SECONDARY, PREF_DNSMASQ_DEFAULT_SECONDARY_IP);
+		}
+		if (!ConfigManager.validateIpAddress(ctx, secondaryDns))
 		{
 			secondaryDns = ConfigManager.PREF_DNSMASQ_DEFAULT_SECONDARY_IP;
 		}
+		editor.putString(PREF_DNSMASQ_SECONDARY, secondaryDns);
+		Log.i(TAG, "Updated secondary DNS to: " + secondaryDns);
 
 		if (cacheSize < 0)
 		{
 			cacheSize = ConfigManager.PREF_DNSMASQ_DEFAULT_CACHE_SIZE;
 		}
-
-		// put the values into the config manager
-		editor.putString(PREF_DNSMASQ_PRIMARY, primaryDns);
-		editor.putString(PREF_DNSMASQ_SECONDARY, secondaryDns);
 		editor.putString(PREF_DNSMASQ_CACHESIZE, "" + cacheSize);
+		Log.i(TAG, "Updated DNS cache size to: " + cacheSize);
+
+		editor.apply();
 
 		// writing the configs
-		if (this.commit(ctx))
+		if (this.commit(ctx, prefs, editor))
 		{
 			Log.d(TAG,
 					"Creation of configuration-files took ==> "
@@ -778,10 +789,5 @@ public class ConfigManager
 		{
 			Log.e(TAG, "Unable to update configuration preferences!");
 		}
-	}
-
-	public void updateDNSConfiguration(Context ctx)
-	{
-		this.updateDNSConfiguration(ctx, null, null, -1);
 	}
 }
