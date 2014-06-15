@@ -763,12 +763,15 @@ public class ConfigManager
 		editor.putString(PREF_DNSMASQ_SECONDARY, secondaryDns);
 		Log.i(TAG, "Updated secondary DNS to: " + secondaryDns);
 
+		String cs = null;
 		if (cacheSize < 0)
 		{
-			cacheSize = ConfigManager.PREF_DNSMASQ_DEFAULT_CACHE_SIZE;
+			cs = prefs.getString(PREF_DNSMASQ_CACHESIZE, "" + PREF_DNSMASQ_DEFAULT_CACHE_SIZE);
+		} else {
+			cs = "" + cacheSize;
 		}
-		editor.putString(PREF_DNSMASQ_CACHESIZE, "" + cacheSize);
-		Log.i(TAG, "Updated DNS cache size to: " + cacheSize);
+		editor.putString(PREF_DNSMASQ_CACHESIZE, cs);
+		Log.i(TAG, "Updated DNS cache size to: " +  cs);
 
 		editor.apply();
 
