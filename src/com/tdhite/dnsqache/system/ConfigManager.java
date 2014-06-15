@@ -515,7 +515,7 @@ public class ConfigManager
 
 		if (!prefs.contains(PREF_DNSMASQ_SECONDARY))
 		{
-			editor.putString(PREF_DNSMASQ_PRIMARY, PREF_DNSMASQ_DEFAULT_SECONDARY_IP);
+			editor.putString(PREF_DNSMASQ_SECONDARY, PREF_DNSMASQ_DEFAULT_SECONDARY_IP);
 		}
 
 		if (!prefs.contains(PREF_DNSMASQ_INTERFACE))
