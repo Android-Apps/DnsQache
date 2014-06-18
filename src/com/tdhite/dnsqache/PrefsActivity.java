@@ -19,6 +19,8 @@ import android.util.Log;
 
 public class PrefsActivity extends Activity
 {
+	private static final String CUSTOM_PROVIDER = "custom";
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -138,6 +140,14 @@ public class PrefsActivity extends Activity
 			else if (pref instanceof EditTextPreference)
 			{
 				// EditPreference
+				if (pref.getKey().equals(ConfigManager.PREF_DNSQACHE_CUSTOM_PRIMARY) ||
+						pref.getKey().equals(ConfigManager.PREF_DNSQACHE_CUSTOM_SECONDARY))
+				{
+					ListPreference listPref = (ListPreference) this.findPreference(ConfigManager.PREF_DNS_PROVIDER);
+					if (listPref.getValue().equalsIgnoreCase(CUSTOM_PROVIDER)) {
+						updateDnsProviders(sharedPreferences, listPref);
+					}
+				}
 				EditTextPreference editTextPref = (EditTextPreference) pref;
 				editTextPref.setSummary(editTextPref.getText());
 			}
@@ -173,8 +183,11 @@ public class PrefsActivity extends Activity
 		private void updateDnsProviders(SharedPreferences prefs, ListPreference listPref)
 		{
 			Activity ctx = this.getActivity();
-			int id = ConfigManager.getResourceId(ctx, listPref.getValue(),
-					"array");
+			int id = -1;
+			String value = listPref.getValue();
+			if (!value.equalsIgnoreCase(CUSTOM_PROVIDER)) {
+				id = ConfigManager.getResourceId(ctx, value, "array");
+			}
 			if (id > 0)
 			{
 				try
@@ -190,7 +203,14 @@ public class PrefsActivity extends Activity
 			}
 			else
 			{
-				Log.e(TAG, "updateDnsProviders: string array id not found: " + id);
+				StringBuilder msg = new StringBuilder();
+				msg.append("updateDnsProviders: string array id not found: ");
+				msg.append(id);
+				msg.append(", trying custom provider as backstop.");
+				Log.e(TAG, msg.toString());
+				String providers[] = ConfigManager.getConfigManager().getCustomDNSProvider(ctx, prefs);
+				ConfigManager.getConfigManager().updateDNSConfiguration(
+						ctx, prefs, providers[0], providers[1], -1);
 			}
 		}
 

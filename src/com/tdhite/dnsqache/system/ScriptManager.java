@@ -158,14 +158,20 @@ public class ScriptManager
 	private void generateStatsScript()
 	{
 		String logFile = mConfigManager.getLogFile();
-		String script = "killbypidfile USR1 \""
-				+ mConfigManager.getDnsmasqPidFile()
-				+ "\"\nrun \"logcat -d | grep dnsmasq >"
-				+ logFile + "\"\nrun chmod 644 \"" + logFile + "\"\n";
+		StringBuilder script = new StringBuilder();
+		script.append("killbypidfile USR1 \"");
+			script.append(mConfigManager.getDnsmasqPidFile());
+			script.append("\"\n");
+		script.append("run \"logcat -d | grep dnsmasq >");
+			script.append(logFile);
+			script.append("\"\n");
+		script.append("run chmod 644 \"");
+			script.append(logFile);
+			script.append("\"\n");
 
 		CoreTask.writeLinesToFile(
 				mConfigManager.getScriptFullPath(ScriptManager.SCRIPT_STATS),
-				script);
+				script.toString());
 	}
 
 	private void generateStartTinyProxyScript()

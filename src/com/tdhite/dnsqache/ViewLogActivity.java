@@ -23,6 +23,7 @@ package com.tdhite.dnsqache;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 
 import com.tdhite.dnsqache.system.ConfigManager;
@@ -67,20 +68,18 @@ public class ViewLogActivity extends Activity {
 		ConfigManager config = ConfigManager.getConfigManager();
 		String logPath = null;
 		switch (id) {
-			case R.id.action_view_log:
-				logPath = config.getLogFile();
-				break;
 			case R.id.action_view_polipo_log:
 				logPath = config.getPolipoLogFile();
-				if (svc != null) {
-					svc.generateLogFile();
-				}
 				break;
 			case R.id.action_view_tinyproxy_log:
 				logPath = config.getTinyProxyLogFile();
 				break;
+			case R.id.action_view_log:
 			default:
 				logPath = config.getLogFile();
+				if (svc != null) {
+					svc.generateLogFile();
+				}
 				break;
 		}
 		String logs = this.readLogfile(logPath);
@@ -103,6 +102,9 @@ public class ViewLogActivity extends Activity {
 			char[] buff = new char[(int) file.length()];
 			isr.read(buff);
 			data = new String(buff);
+		} catch (FileNotFoundException e) {
+			data = this.getString(R.string.log_activity_filenotfound) + ":<br/>\n"
+					+ config.getLogFile();
 		} catch (Exception e) {
 			data = this.getString(R.string.log_activity_filenotfound) + ":<br/>\n"
 					+ config.getLogFile() + "<br/>\nException:<br/>\n" + e.toString();

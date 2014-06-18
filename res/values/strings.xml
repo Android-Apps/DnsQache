@@ -33,6 +33,7 @@
     <string name="cache_size">Cache Size</string>
     
     <string-array name="array_dns_provider_names">
+        <item>Custom</item>
         <item>DNSAdvantage</item>
         <item>Google</item>
         <item>Norton</item>
@@ -43,6 +44,10 @@
         <item>Verizon3</item>
         <item>Verizon4</item>
         <item>Verizon5</item>
+    </string-array>
+    <string-array name="Custom">
+        <item>N/A</item>
+        <item>N/A</item>
     </string-array>
     <string-array name="DNSAdvantage">
         <item>156.154.70.1</item>
@@ -84,7 +89,7 @@
         <item>4.2.2.5</item>
         <item>4.2.2.6</item>
     </string-array>
-
+    
     <string-array name="array_proxy_apps">
         <item>Polipo Caching Proxy</item>
         <item>TinyProxy (No Caching)</item>

@@ -5,11 +5,12 @@
 	</PreferenceCategory>
 	<PreferenceCategory
 	   android:summary="Settings to tune DNS host name caching."
-	   android:title="DNS Cache Settings" >
+	   android:title="DNS Settings" >
 	    <ListPreference android:defaultValue="@string/default_dns_provider" android:entries="@array/array_dns_provider_names" android:title="DNS Provider" android:key="dnsqache.provider" android:entryValues="@array/array_dns_provider_names" android:summary="The DNS Provider to use for host lookups." />
-	    <ListPreference android:defaultValue="0" android:entries="@array/dnsmasq_cache_size" android:title="Cache Size" android:key="dnsmasq.cache-size" android:entryValues="@array/dnsmasq_cache_size" android:summary="Maximum number of hostnames to cache." />
+	    <EditTextPreference android:summary="Custom Primary Name Server IP" android:title="Custom Primary Server IP" android:key="dnsqache.custom1" android:defaultValue="8.8.8.8" /><EditTextPreference android:summary="Custom Secondary Name Server IP" android:title="Custom Secondary Server IP" android:key="dnsqache.custom2" android:defaultValue="8.8.4.4" /><ListPreference android:defaultValue="0" android:entries="@array/dnsmasq_cache_size" android:title="Cache Size" android:key="dnsmasq.cache-size" android:entryValues="@array/dnsmasq_cache_size" android:summary="Maximum number of hostnames to cache." />
 	    <EditTextPreference android:title="DNSQache DNS Cache Port" android:key="dnsmasq.port" android:defaultValue="5353" android:summary="DNS port to use for DNS redirection." />
 	    <CheckBoxPreference android:key="dnsmasq.log-queries" android:summary="Log DNS Queries to logcat." android:title="Log DNS Queries" android:defaultValue="false" />
+	    
 	</PreferenceCategory>
 	<PreferenceCategory android:title="Proxy Settings" android:summary="Settings for the HTTP/HTTPS Proxy.">
 	    <CheckBoxPreference android:key="proxy.activate" android:title="HTTP/HTTPS Proxy" android:summary="Use  HTTP/HTTPS Proxy" android:defaultValue="false"/>    

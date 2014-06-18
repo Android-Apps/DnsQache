@@ -20,6 +20,7 @@ import java.io.OutputStream;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -42,6 +43,8 @@ public class ConfigManager
 	/* dnsqache */
 	public static final String PREF_START_ON_BOOT = "dnsqache.activateQacheOnBoot";
 	public static final boolean PREF_DEFAULT_START_ON_BOOT = false;
+	public static final String PREF_DNSQACHE_CUSTOM_PRIMARY = "dnsqache.custom1";
+	public static final String PREF_DNSQACHE_CUSTOM_SECONDARY = "dnsqache.custom2";
 	public static final String PREF_DNS_OLDPRIMARY = "dnsqache.oldPrimary";
 	public static final String PREF_DNS_OLDSECONDARY = "dnsqache.oldSecondary";
 
@@ -733,6 +736,17 @@ public class ConfigManager
 			{
 				prefs.getString(PREF_DNSMASQ_PRIMARY, PREF_DNSMASQ_DEFAULT_PRIMARY_IP),
 				prefs.getString(PREF_DNSMASQ_SECONDARY, PREF_DNSMASQ_DEFAULT_SECONDARY_IP)
+			};
+		return dnsServers;
+	}
+
+
+	public String[] getCustomDNSProvider(Activity ctx, SharedPreferences prefs)
+	{
+		String dnsServers[] = new String[]
+			{
+				prefs.getString(PREF_DNSQACHE_CUSTOM_PRIMARY, PREF_DNSMASQ_DEFAULT_PRIMARY_IP),
+				prefs.getString(PREF_DNSQACHE_CUSTOM_SECONDARY, PREF_DNSMASQ_DEFAULT_SECONDARY_IP)
 			};
 		return dnsServers;
 	}
