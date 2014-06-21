@@ -17,6 +17,14 @@ local.properties
 #.settings/
 .loadpath
 
+# Google repo tooling
+.repo
+
+# External projects build via jni
+jni/tinyproxy
+jni/dnsmasq
+jni/polipo
+
 # External tool builders
 .externalToolBuilders/
 
