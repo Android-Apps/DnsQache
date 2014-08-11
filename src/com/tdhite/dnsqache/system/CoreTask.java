@@ -37,7 +37,7 @@ import android.util.Log;
 
 public class CoreTask
 {
-	public static final String TAG = "DNSQACHE -> CoreTask";
+	public static final String TAG = "DNSQACHE.CoreTask";
 
 	private static Hashtable<String, String> runningProcesses = new Hashtable<String, String>();
 

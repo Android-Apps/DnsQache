@@ -25,11 +25,8 @@ jni/tinyproxy
 jni/dnsmasq
 jni/polipo
 
-# External tool builders
-.externalToolBuilders/
-
 # Locally stored "Eclipse launch configurations"
-*.launch
+#*.launch
 
 # CDT-specific
 .cproject

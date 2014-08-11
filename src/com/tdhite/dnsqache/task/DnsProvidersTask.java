@@ -1,105 +1,61 @@
 package com.tdhite.dnsqache.task;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URI;
+import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
-import org.json.JSONObject;
 
+import com.tdhite.dnsqache.R;
+import com.tdhite.dnsqache.db.CountryHandler;
 import com.tdhite.dnsqache.model.DnsProviders;
 
 import android.content.Context;
+import android.util.Log;
 
 
-class DnsProvidersTask extends Task {
-	public static final String TAG = "DNSQACHE -> DnsProvidersTask";
+public class DnsProvidersTask extends Task {
+	public static final String TAG = "DnsProvidersTask";
 
-	private String dnsProvidersUrl = null;
-	private String result = "";
+	private static final String DEFAULT_PROVIDERS_URL = "http://public-dns.tk/nameservers.json";
 
-	public DnsProvidersTask(int id, Context context, Callback<Boolean> callback,
-			Boolean startInBackground)
+	public DnsProvidersTask(Context context, Callback<Boolean> callback)
 	{
-		super(id, context, callback, startInBackground);
-	}
+		super(Callback.TASK_START, context, callback, false);
 
-	public void getResponse()
-	{
-		HttpClient client = new DefaultHttpClient();    
-		String query = dnsProvidersUrl;
-
-		try
-		{
-			URL url = new URL(query);
-			URI uri = new URI(url.getProtocol(), url.getHost(),url.getPath(), url.getQuery(),null);
-			HttpGet request = new HttpGet(uri);
-			HttpResponse response = client.execute(request);
-			result=Userrequest(response); 
-		}
-		catch(Exception ex)
-		{
-		}
-	}
-
-	public String Userrequest(HttpResponse response)
-	{
-		try     
-		{
-			InputStream in = response.getEntity().getContent();
-			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-			StringBuilder str = new StringBuilder();
-			String line = null;
-			while((line = reader.readLine()) != null)
-			{
-				str.append(line + "\n");
-			}
-			in.close();
-			result = str.toString();
-			updateData(result);         
-		}
-		catch(Exception ex)
-		{
-			//responsetxt.setText(ex.getMessage());
-		}
-		return result;
-	}
-
-	public void updateData(String result)
-	{
-		try     
-		{
-			JSONObject json = new JSONObject(result);
-			JSONArray ja;
-			json = json.getJSONObject("responseData");
-			ja = json.getJSONArray("results");
-
-			int resultCount = ja.length();
-
-			for (int i =0; i<resultCount; i++)
-			{
-				JSONObject resultObject = ja.getJSONObject(i);
-				result = resultObject.toString();
-			}
-		}
-		catch(Exception ex)
-		{
-			//responsetxt.setText(ex.getMessage());
+		if (mProgressDialog != null) {
+			mProgressDialog.setTitle(R.string.text_update_dns_providers);
 		}
 	}
 
 	@Override
 	protected Boolean doInBackground(Void... params)
 	{
-		publishProgress("Getting providers from resources ...");
-		DnsProviders providers = new DnsProviders();
-		providers.fromResources(this.mContext);
+		String msg = this.mContext.getString(R.string.text_updating_countries);
+		publishProgress(msg);
+		CountryHandler ch = new CountryHandler(this.mContext);
+		ch.clear();
+
+		DnsProviders providers = new DnsProviders(this.mContext);
+		URL url = null;
+		try
+		{
+			url = new URL(DEFAULT_PROVIDERS_URL);
+		}
+		catch (MalformedURLException e)
+		{
+			Log.e(TAG, "JSON Fetch Failed. Please see logcat!", e);
+		}
+
+		msg = this.mContext.getString(R.string.text_fetching_providers);
+		publishProgress(msg);
+		Log.i(TAG, "Fetching JSON provider information from " + DEFAULT_PROVIDERS_URL);
+		JSONArray jsonProviders = providers.getJSONFromUrl(this.mContext, url);
+
+		msg = this.mContext.getString(R.string.text_updating_providers);
+		publishProgress(msg);
+		Log.i(TAG, "Populating provider database.");
+		providers.toInternal(this.mContext, jsonProviders);
+
 		return true;
 	}
 }

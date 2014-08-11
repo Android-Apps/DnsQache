@@ -40,7 +40,7 @@ import android.util.Log;
 
 public class QacheService extends Service
 {
-	private static final String TAG = "DNSQACHE -> QacheService";
+	private static final String TAG = "DNSQACHE.QacheService";
 
 	public static final String STATECHANGED_INTENT = "com.tdhite.dnsaqche.intent.STATE";
 	public static final String SERVICEMANAGE_INTENT = "com.tdhite.dnsaqche.intent.MANAGE";

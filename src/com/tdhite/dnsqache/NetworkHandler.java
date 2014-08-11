@@ -27,7 +27,7 @@ import android.util.Log;
 
 public class NetworkHandler extends Handler
 {
-	private static final String TAG = "DNSQACHE -> NetworkHandler";
+	private static final String TAG = "DNSQACHE.NetworkHandler";
 
 	private static NetworkConnectivityListener mNetworkConnectivityListener = null;
 	private static int CONNECTIVITY_MSG = 0;

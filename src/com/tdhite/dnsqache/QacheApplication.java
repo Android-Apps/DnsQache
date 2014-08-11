@@ -12,8 +12,10 @@
 
 package com.tdhite.dnsqache;
 
+import com.tdhite.dnsqache.db.DnsQacheDB;
 import com.tdhite.dnsqache.system.ConfigManager;
 import com.tdhite.dnsqache.system.CoreTask;
+import com.tdhite.dnsqache.ui.MainActivity;
 
 import android.annotation.SuppressLint;
 import android.app.Application;
@@ -31,7 +33,7 @@ import android.util.Log;
 
 public class QacheApplication extends Application
 {
-	public static final String TAG = "DNSQACHE -> QacheApplication";
+	public static final String TAG = "DNSQACHE.QacheApplication";
 
 	// See private void openAboutDialog()
 	public static final String AUTHORS = "<HTML><a href=\"https://plus.google.com/107383659668377669605\">Tom Hite</a></HTML>";
@@ -70,6 +72,11 @@ public class QacheApplication extends Application
 		// Initialize configuration
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		ConfigManager.getConfigManager().updateDNSConfiguration(this, prefs, null, null, -1);
+
+		// initialize the database
+		DnsQacheDB db = new DnsQacheDB(this);
+		db.open();
+		db.close();
 	}
 
 	@Override

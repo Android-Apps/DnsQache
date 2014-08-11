@@ -1,5 +1,7 @@
 package com.tdhite.dnsqache.task;
 
+import com.tdhite.dnsqache.R;
+
 import android.annotation.TargetApi;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -8,7 +10,7 @@ import android.os.Build;
 import android.util.Log;
 
 public abstract class Task extends AsyncTask<Void, String, Boolean> {
-	public static final String TAG = "DNSQACHE -> Task";
+	public static final String TAG = "DNSQACHE.Task";
 
 	protected Integer mId = 0;
 	protected Context mContext = null;
@@ -26,11 +28,11 @@ public abstract class Task extends AsyncTask<Void, String, Boolean> {
 		if (mContext != null && mStartInBackground == false) {
 			mProgressDialog = new ProgressDialog(mContext);
 			mProgressDialog.setTitle(null);
-			mProgressDialog.setMessage("Please wait...");
+			mProgressDialog.setMessage(mContext.getString(R.string.text_please_wait));
 			mProgressDialog.setCancelable(false);
 			mProgressDialog.setCanceledOnTouchOutside(false);
 			mProgressDialog.setIndeterminate(true);
-			mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+			mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 			mProgressDialog.setIcon(0);
 		}
 	}

@@ -17,9 +17,10 @@
     <string name="text_qache_start">Click below to start the qache:</string>
     <string name="text_qache_stop">Click below to stop the qache.</string>
     <string name="text_empty"></string>
+    <string name="text_provider_country">Provider Country</string>
 
 	<string name="text_ipaddress_invalid">Ip-address is not valid, not saved.</string>
-    
+
     <string name="default_dns_providers_url">http://tdhdirect.appspot.com/dnsqache/providers</string>
     <string name="default_dns_provider">OpenDNS</string>
 
@@ -31,7 +32,7 @@
     <string name="dns_primary">Primary</string>
     <string name="dns_secondary">Secondary</string>
     <string name="cache_size">Cache Size</string>
-    
+
     <string-array name="array_dns_provider_names">
         <item>Custom</item>
         <item>DNSAdvantage</item>
@@ -89,7 +90,7 @@
         <item>4.2.2.5</item>
         <item>4.2.2.6</item>
     </string-array>
-    
+
     <string-array name="array_proxy_apps">
         <item>Polipo Caching Proxy</item>
         <item>TinyProxy (No Caching)</item>
@@ -164,9 +165,12 @@
      <string name="layout_donate_line3">Donations do not purchase new applications, rather help the developers continue their work.</string>
      <string name="layout_donate_line4">If you want to donate later, you can do so from the \'About\' dialog.</string>
      <string name="layout_donate_line5">Thank you!</string>
-     
-     
-     
-     
-     
+
+     <string name="text_fetching_providers">Fetching provider information from the Internet, please wait &#8230;</string>
+     <string name="text_title_update_dns_providers">DNS Providers</string>
+     <string name="text_update_dns_providers">Update DNS Providers</string>
+     <string name="text_updating_countries">Updating countries, please wait &#8230;</string>
+     <string name="text_updating_providers">Updating providers database &#8212; can take many minutes, please wait &#8230;</string>
+
+     <string name="text_please_wait">Please wait &#8230;</string>
 </resources>

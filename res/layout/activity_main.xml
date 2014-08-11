@@ -44,4 +44,16 @@
         android:textOff="@string/text_empty"
         android:textOn="@string/text_empty" />
 
+    <Button
+        android:id="@+id/btn_update_dns_providers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/qache_active_button"
+        android:layout_alignParentBottom="true"
+        android:layout_alignRight="@+id/qache_active_button"
+        android:layout_marginBottom="37dp"
+        android:layout_marginLeft="16dp"
+        android:onClick="onClick"
+        android:text="@string/text_update_dns_providers" />
+
 </RelativeLayout>

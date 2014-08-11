@@ -32,7 +32,7 @@ import com.tdhite.dnsqache.R;
 
 public class ConfigManager
 {
-	public static final String TAG = "DNSQACHE -> ConfigManager";
+	public static final String TAG = "DNSQACHE.ConfigManager";
 
 	private static ConfigManager mSingleton = null;
 
@@ -49,6 +49,8 @@ public class ConfigManager
 	public static final String PREF_DNS_OLDSECONDARY = "dnsqache.oldSecondary";
 
 	/* dnsmasq */
+	public static final String PREF_NAMESERVER_PRIMARY = "dnsqache.primary-dns";
+	public static final String PREF_NAMESERVER_SECONDARY = "dnsqache.secondary-dns";
 	public static final String PREF_DNSMASQ_PRIMARY = "dnsqache.primary";
 	public static final String PREF_DNSMASQ_DEFAULT_PRIMARY_IP = "208.67.222.222";
 	public static final String PREF_DNSMASQ_SECONDARY = "dnsqache.secondary";
@@ -73,6 +75,8 @@ public class ConfigManager
 
 	public static final String PREF_UI_DNS_LOG_QUERIES = "dnsmasq.log-queries";
 	public static final String PREF_DNS_PROVIDER = "dnsqache.provider";
+	public static final String PREF_DNS_COUNTRY_CODE = "dnsqache.country-code";
+	public static final String PREF_DNS_COUNTRY_CODE_DEFAULT = "US";
 
 	public static final String PREF_PROXY_TYPE = "proxy.type";
 	public static final String PREF_PROXY_DEFAULT_TYPE = "polipo";

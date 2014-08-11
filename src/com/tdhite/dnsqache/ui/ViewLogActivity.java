@@ -19,13 +19,15 @@ Portions also Copyright (c) 2009 by Harald Mueller and Sofia Lemons.
 
 */
 
-package com.tdhite.dnsqache;
+package com.tdhite.dnsqache.ui;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 
+import com.tdhite.dnsqache.QacheService;
+import com.tdhite.dnsqache.R;
 import com.tdhite.dnsqache.system.ConfigManager;
 
 import android.os.Bundle;
@@ -34,7 +36,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 
 public class ViewLogActivity extends Activity {
-	static public final String TAG = "DNSMASQ -> ViewLogActivity";
+	static public final String TAG = "DNSQACHE.ViewLogActivity";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

@@ -19,7 +19,13 @@ Portions also Copyright (c) 2009 by Harald Mueller and Sofia Lemons.
 
 */
 
-package com.tdhite.dnsqache;
+package com.tdhite.dnsqache.ui;
+
+import com.tdhite.dnsqache.QacheApplication;
+import com.tdhite.dnsqache.QacheService;
+import com.tdhite.dnsqache.R;
+import com.tdhite.dnsqache.task.DnsProvidersTask;
+import com.tdhite.dnsqache.task.Task.Callback;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -39,9 +45,10 @@ import android.widget.ToggleButton;
 
 public class MainActivity extends Activity
 {
-	public static final String TAG = "DNSQACHE -> MainActivity";
+	public static final String TAG = "DNSQACHE.MainActivity";
 	public static final String VIEW_LOG_FILE_EXTRA = "logFile";
 	private boolean mInitialized = false;
+	private boolean mDnsProvidersNotInitialized = true;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -254,6 +261,25 @@ public class MainActivity extends Activity
 			case R.id.qache_active_button:
 				toggleQache((ToggleButton) view);
 				break;
+			case R.id.btn_update_dns_providers:
+				updateDnsProviders();
+				break;
+		}
+	}
+
+	private void updateDnsProviders()
+	{
+		if (this.mDnsProvidersNotInitialized)
+		{
+			setProgressBarIndeterminateVisibility(true);
+	
+			new DnsProvidersTask(this, new Callback<Boolean>() {
+				@Override
+				public void onTaskComplete(int id, Boolean result) {
+					setProgressBarIndeterminateVisibility(false);
+				}
+			}).execute();
+			this.mDnsProvidersNotInitialized = false;
 		}
 	}
 }

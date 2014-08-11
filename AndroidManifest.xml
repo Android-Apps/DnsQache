@@ -39,7 +39,7 @@
         </receiver>
 
         <activity
-            android:name="com.tdhite.dnsqache.MainActivity"
+            android:name="com.tdhite.dnsqache.ui.MainActivity"
             android:label="@string/app_name"
             android:launchMode="singleTask" >
             <intent-filter>
@@ -49,11 +49,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.tdhite.dnsqache.ViewLogActivity"
+            android:name="com.tdhite.dnsqache.ui.ViewLogActivity"
             android:label="@string/title_activity_view_log" >
         </activity>
         <activity
-            android:name="com.tdhite.dnsqache.PrefsActivity"
+            android:name="com.tdhite.dnsqache.ui.PrefsActivity"
             android:theme="@android:style/Theme.Black.NoTitleBar" >
         </activity>
     </application>

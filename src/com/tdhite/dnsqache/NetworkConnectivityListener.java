@@ -53,7 +53,7 @@ import java.util.Iterator;
 
 public class NetworkConnectivityListener
 {
-	private static final String TAG = "DNSQACHE -> NetworkConnectivityListener";
+	private static final String TAG = "DNSQACHE.NetworkConnectivityListener";
 	private static final boolean DBG = false;
 
 	private HashMap<Handler, Integer> mHandlers = new HashMap<Handler, Integer>();

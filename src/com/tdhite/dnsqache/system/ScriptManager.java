@@ -25,7 +25,7 @@ import android.util.Log;
 
 public class ScriptManager
 {
-	private static final String TAG = "DNSQACHE -> Scripter";
+	private static final String TAG = "DNSQACHE.Scripter";
 
 	public static final String SCRIPT_BINARY = "scripter";
 

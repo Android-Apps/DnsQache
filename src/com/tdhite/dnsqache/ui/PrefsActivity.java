@@ -1,8 +1,6 @@
-package com.tdhite.dnsqache;
+package com.tdhite.dnsqache.ui;
 
 import java.util.Set;
-
-import com.tdhite.dnsqache.system.ConfigManager;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -15,7 +13,11 @@ import android.preference.MultiSelectListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceScreen;
 import android.util.Log;
+
+import com.tdhite.dnsqache.R;
+import com.tdhite.dnsqache.system.ConfigManager;
 
 public class PrefsActivity extends Activity
 {
@@ -34,7 +36,7 @@ public class PrefsActivity extends Activity
 	public static class PrefsFragment extends PreferenceFragment implements
 			OnSharedPreferenceChangeListener
 	{
-		private static final String TAG = "DNSQACHE -> PrefsFragment";
+		private static final String TAG = "DNSQACHE.PrefsFragment";
 
 		@Override
 		public void onCreate(Bundle savedInstanceState)
@@ -52,9 +54,24 @@ public class PrefsActivity extends Activity
 		public void onResume()
 		{
 			super.onResume();
+
 			// Set up a listener whenever a key changes
 			getPreferenceScreen().getSharedPreferences()
 					.registerOnSharedPreferenceChangeListener(this);
+
+			CursorListPreference countries = (CursorListPreference) this
+					.findPreference(ConfigManager.PREF_DNS_COUNTRY_CODE);
+			countries.setCountryData();
+
+			CursorListPreference primary = (CursorListPreference) this
+					.findPreference(ConfigManager.PREF_NAMESERVER_PRIMARY);
+			primary.setProviderData(countries.getValue());
+
+			CursorListPreference secondary = (CursorListPreference) this
+					.findPreference(ConfigManager.PREF_NAMESERVER_SECONDARY);
+			secondary.setProviderData(countries.getValue());
+
+			// initialize views
 			initSummary();
 		}
 
@@ -104,6 +121,15 @@ public class PrefsActivity extends Activity
 					initPrefsSummary(sharedPreferences, pCat.getPreference(i));
 				}
 			}
+			else if (pref instanceof PreferenceScreen)
+			{
+				PreferenceScreen pScreen = (PreferenceScreen) pref;
+				for (int i = 0; i < pScreen.getPreferenceCount(); i++)
+				{
+					initPrefsSummary(getPreferenceManager()
+							.getSharedPreferences(), pScreen.getPreference(i));
+				}
+			}
 			else
 			{
 				updatePrefsSummary(sharedPreferences, pref);
@@ -122,7 +148,26 @@ public class PrefsActivity extends Activity
 			if (pref == null)
 				return;
 
-			if (pref instanceof ListPreference)
+			if (pref instanceof CursorListPreference)
+			{
+				// List Preference
+				CursorListPreference listPref = (CursorListPreference) pref;
+				listPref.setSummary(listPref.getEntry());
+
+				if (pref.getKey().equals(ConfigManager.PREF_DNS_COUNTRY_CODE))
+				{
+					updateCountryCode(sharedPreferences, listPref);
+				}
+				else if (pref.getKey().equals(ConfigManager.PREF_NAMESERVER_PRIMARY))
+				{
+					updatePrimaryDns(sharedPreferences, listPref);
+				}
+				else if (pref.getKey().equals(ConfigManager.PREF_NAMESERVER_SECONDARY))
+				{
+					updateSecondaryDns(sharedPreferences, listPref);
+				}
+			}
+			else if (pref instanceof ListPreference)
 			{
 				// List Preference
 				ListPreference listPref = (ListPreference) pref;
@@ -180,8 +225,46 @@ public class PrefsActivity extends Activity
 			}
 		}
 
-		private void updateDnsProviders(SharedPreferences prefs, ListPreference listPref)
+		private void updatePrimaryDns(SharedPreferences sharedPreferences,
+				CursorListPreference listPref) {
+			EditTextPreference primary = (EditTextPreference) this
+					.findPreference(ConfigManager.PREF_DNSQACHE_CUSTOM_PRIMARY);
+			primary.setText(listPref.getValue());
+			sharedPreferences.edit().putString(
+					ConfigManager.PREF_DNSQACHE_CUSTOM_PRIMARY, listPref.getValue());
+		}
+
+		private void updateSecondaryDns(SharedPreferences sharedPreferences,
+				CursorListPreference listPref) {
+			EditTextPreference primary = (EditTextPreference) this
+					.findPreference(ConfigManager.PREF_DNSQACHE_CUSTOM_SECONDARY);
+			primary.setText(listPref.getValue());
+			sharedPreferences.edit().putString(
+					ConfigManager.PREF_DNSQACHE_CUSTOM_SECONDARY, listPref.getValue());
+		}
+
+		private void updateCountryCode(SharedPreferences sharedPreferences,
+				CursorListPreference listPref)
 		{
+			updateProviderLists(sharedPreferences, listPref);
+			sharedPreferences.edit().putString(
+					ConfigManager.PREF_DNS_COUNTRY_CODE, listPref.getValue());
+		}
+
+		private void updateProviderLists(SharedPreferences sharedPreferences,
+				CursorListPreference listPref)
+		{
+			CursorListPreference primary = (CursorListPreference) this
+					.findPreference(ConfigManager.PREF_NAMESERVER_PRIMARY);
+			primary.setProviderData(listPref.getValue());
+
+			CursorListPreference secondary = (CursorListPreference) this
+					.findPreference(ConfigManager.PREF_NAMESERVER_SECONDARY);
+			secondary.setProviderData(listPref.getValue());
+		}
+
+		private void updateDnsProviders(SharedPreferences prefs,
+				ListPreference listPref)		{
 			Activity ctx = this.getActivity();
 			int id = -1;
 			String value = listPref.getValue();
@@ -214,8 +297,8 @@ public class PrefsActivity extends Activity
 			}
 		}
 
-		private void updateDnsCacheSize(SharedPreferences prefs, ListPreference listPref)
-		{
+		private void updateDnsCacheSize(SharedPreferences prefs,
+				ListPreference listPref)		{
 			Activity ctx = this.getActivity();
 			int size = -1;
 			String value = listPref.getValue();

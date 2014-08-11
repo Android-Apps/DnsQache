@@ -24,7 +24,7 @@ import android.util.Log;
 
 public class NativeTask {
     
-	public static final String TAG = "DNSQACHE -> NativeTask";
+	public static final String TAG = "DNSQACHE.NativeTask";
 
 	static {
         try {
