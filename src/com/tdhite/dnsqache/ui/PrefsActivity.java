@@ -246,21 +246,33 @@ public class PrefsActivity extends Activity
 		private void updateCountryCode(SharedPreferences sharedPreferences,
 				CursorListPreference listPref)
 		{
-			updateProviderLists(sharedPreferences, listPref);
 			sharedPreferences.edit().putString(
 					ConfigManager.PREF_DNS_COUNTRY_CODE, listPref.getValue());
+			updateProviderLists(sharedPreferences, listPref);
 		}
 
 		private void updateProviderLists(SharedPreferences sharedPreferences,
-				CursorListPreference listPref)
+				CursorListPreference countryListPref)
 		{
 			CursorListPreference primary = (CursorListPreference) this
 					.findPreference(ConfigManager.PREF_NAMESERVER_PRIMARY);
-			primary.setProviderData(listPref.getValue());
-
 			CursorListPreference secondary = (CursorListPreference) this
 					.findPreference(ConfigManager.PREF_NAMESERVER_SECONDARY);
-			secondary.setProviderData(listPref.getValue());
+
+			if (countryListPref.getValue().equals(this.getActivity().getString(R.string.text_none)))
+			{
+				primary.setEnabled(false);
+				secondary.setEnabled(false);
+			}
+			else
+			{
+				primary.setEnabled(true);
+				secondary.setEnabled(true);
+				primary.setProviderData(countryListPref.getValue());
+				secondary.setProviderData(countryListPref.getValue());
+				this.updatePrimaryDns(sharedPreferences, primary);
+				this.updateSecondaryDns(sharedPreferences, secondary);
+			}
 		}
 
 		private void updateDnsProviders(SharedPreferences prefs,
@@ -278,6 +290,7 @@ public class PrefsActivity extends Activity
 					String[] providers = ctx.getResources().getStringArray(id);
 					ConfigManager.getConfigManager().updateDNSConfiguration(
 							ctx, prefs, providers[0], providers[1], -1);
+					enableCustomProviders(false);
 				}
 				catch (Resources.NotFoundException e)
 				{
@@ -294,6 +307,15 @@ public class PrefsActivity extends Activity
 				String providers[] = ConfigManager.getConfigManager().getCustomDNSProvider(ctx, prefs);
 				ConfigManager.getConfigManager().updateDNSConfiguration(
 						ctx, prefs, providers[0], providers[1], -1);
+				enableCustomProviders(true);
+			}
+		}
+
+		private void enableCustomProviders(boolean enabled) {
+			PreferenceScreen ps = (PreferenceScreen) this
+					.findPreference(ConfigManager.PREF_SCREEN_CUSTOM_DNS_PROVIDERS);
+			if (ps != null) {
+				ps.setEnabled(enabled);
 			}
 		}
 

@@ -272,7 +272,7 @@ public class MainActivity extends Activity
 		if (this.mDnsProvidersNotInitialized)
 		{
 			setProgressBarIndeterminateVisibility(true);
-	
+
 			new DnsProvidersTask(this, new Callback<Boolean>() {
 				@Override
 				public void onTaskComplete(int id, Boolean result) {

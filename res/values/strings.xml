@@ -4,7 +4,7 @@
     <string name="action_preferences">Settings</string>
     <string name="binaries_installed">binaries successfully installed.</string>
 
-    <string name="qache_is_running">DNSQache DNS and HTTP(S) Proxy ervice</string>
+    <string name="qache_is_running">DNSQache DNS + HTTP(S) Proxy Service</string>
     <string name="qache_start_script">qachestart.scr</string>
     <string name="menu_view_log">View Log</string>
     <string name="menu_view_dns_log">DNS</string>
@@ -154,6 +154,10 @@
          v0.83\n\t\t1. Modified IPTABLES and process model to support custom ROMs refusing to start if port 53 already taken.\n\n
          v0.84\n\t\t1. Added About box;
               \n\t\t2. Fixed cache size resetting to default on reboot of phone.\n\n
+         v1.00\n\t\t1. Significant UI Upgrades;\n\n
+         v1.07\n\t\t1. Multi-Country Custom DNS Selection;
+              \n\t\t2. Minor fixes.\n\n
+         v1.08\n\t\t1. Allow override of Multi-Country Custom DNS.";\n\n
      </string>
      <string name="activity_main_about">About</string>
      <string name="activity_main_donate">Donate</string>
@@ -170,7 +174,8 @@
      <string name="text_title_update_dns_providers">DNS Providers</string>
      <string name="text_update_dns_providers">Update DNS Providers</string>
      <string name="text_updating_countries">Updating countries, please wait &#8230;</string>
-     <string name="text_updating_providers">Updating providers database &#8212; can take many minutes, please wait &#8230;</string>
+     <string formatted="false" name="text_updating_providers">Updating providers database. Processed %d of %d.</string>
 
      <string name="text_please_wait">Please wait &#8230;</string>
+     <string name="text_none">None</string>
 </resources>

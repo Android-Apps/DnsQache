@@ -7,6 +7,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DnsQacheDB
 {
+	public static final String QUERY_CITIES = "select distinct DnsProvider.countryId, Country.name from DnsProvider, Country where DnsProvider.countryId = Country.id order by Country.name";
+	public static final String QUERY_CITYIES_2 = "SELECT DISTINCT DnsProvider.countryId, Country.name from DnsProvider, Country WHERE DnsProvider.countryId=Country.id order by Country.name";
+
 	private Context context;
 	private DatabaseHelper dbHelper;
     private SQLiteDatabase db;

@@ -14,6 +14,8 @@ public class DnsProviderHandler extends SQLiteOpenHelper
 
 	public static final String DB_TABLE = "DnsProvider";
 
+	private static final String READ_ORDER_BY = DnsProvider.COL_CITY + "," + DnsProvider.COL_NAME;
+
 	public DnsProviderHandler(Context context)
 	{
 		super(context, Constants.DB_NAME, null, Constants.DB_VERSION);
@@ -139,7 +141,7 @@ public class DnsProviderHandler extends SQLiteOpenHelper
 			}, DnsProvider.COL_ID + "=?", new String[]
 			{
 				String.valueOf(id)
-			}, null, null, DnsProvider.COL_NAME);
+			}, null, null, READ_ORDER_BY);
 		if (cursor != null)
 			cursor.moveToFirst();
 
@@ -165,7 +167,7 @@ public class DnsProviderHandler extends SQLiteOpenHelper
 			}, DnsProvider.COL_COUNTRY_ID + "=?", new String[]
 			{
 				countryId
-			}, null, null, DnsProvider.COL_NAME);
+			}, null, null, READ_ORDER_BY);
 
 		return cursor;
 	}

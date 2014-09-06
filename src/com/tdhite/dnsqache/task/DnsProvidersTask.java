@@ -51,11 +51,22 @@ public class DnsProvidersTask extends Task {
 		Log.i(TAG, "Fetching JSON provider information from " + DEFAULT_PROVIDERS_URL);
 		JSONArray jsonProviders = providers.getJSONFromUrl(this.mContext, url);
 
-		msg = this.mContext.getString(R.string.text_updating_providers);
-		publishProgress(msg);
+		final String updateMsg = this.mContext.getString(R.string.text_updating_providers);
+		msg = String.format(updateMsg, 0, 0);
+		publishProgress(updateMsg);
 		Log.i(TAG, "Populating provider database.");
-		providers.toInternal(this.mContext, jsonProviders);
+		providers.toInternal(this.mContext, jsonProviders, new ProgressCallback<Integer>() {
+			@Override
+			public void onUpdateProgress(Integer countProcessed, Integer total) {
+				String msg = String.format(updateMsg, countProcessed, total);
+				publishProgress(msg);
+			}
+		});
 
 		return true;
+	}
+
+	public interface ProgressCallback<T> {
+		public void onUpdateProgress(T progress, T total);
 	}
 }

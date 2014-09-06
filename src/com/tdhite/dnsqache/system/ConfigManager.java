@@ -47,6 +47,7 @@ public class ConfigManager
 	public static final String PREF_DNSQACHE_CUSTOM_SECONDARY = "dnsqache.custom2";
 	public static final String PREF_DNS_OLDPRIMARY = "dnsqache.oldPrimary";
 	public static final String PREF_DNS_OLDSECONDARY = "dnsqache.oldSecondary";
+	public static final String PREF_SCREEN_CUSTOM_DNS_PROVIDERS = "pref_screen_custom_dns_providers";
 
 	/* dnsmasq */
 	public static final String PREF_NAMESERVER_PRIMARY = "dnsqache.primary-dns";

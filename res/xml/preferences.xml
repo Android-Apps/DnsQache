@@ -24,14 +24,17 @@
 
         <PreferenceScreen
             android:summary="Set Custom DNS Providers"
-            android:title="Custom DNS" >
+            android:title="Custom DNS"
+            android:key="pref_screen_custom_dns_providers" >
             <com.tdhite.dnsqache.ui.CursorListPreference
                 android:key="dnsqache.country-code"
-                android:defaultValue="8.8.8.8"
+                android:defaultValue="@string/text_none"
                 android:summary="@string/text_provider_country"
                 android:title="@string/text_provider_country" />
+
             <com.tdhite.dnsqache.ui.CursorListPreference
                 android:key="dnsqache.primary-dns"
+                android:defaultValue="8.8.8.8"
                 android:summary="@string/dns_primary"
                 android:title="@string/dns_primary" />
 

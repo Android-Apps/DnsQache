@@ -6,6 +6,7 @@ import android.preference.ListPreference;
 import android.util.AttributeSet;
 import android.util.Log;
 
+import com.tdhite.dnsqache.R;
 import com.tdhite.dnsqache.db.CountryHandler;
 import com.tdhite.dnsqache.db.DnsProviderHandler;
 import com.tdhite.dnsqache.model.Country;
@@ -31,9 +32,11 @@ public class CursorListPreference extends ListPreference {
 			Log.w(TAG, "No DB info returned for countries.");
 		} else {
 			cursor.moveToFirst();
-			entries = new CharSequence[cursor.getCount()];
-			values = new CharSequence[cursor.getCount()];
-			int i = 0;
+			entries = new CharSequence[cursor.getCount()+1];
+			values = new CharSequence[cursor.getCount()+1];
+			values[0] = this.getContext().getText(R.string.text_none);
+			entries[0] = values[0];
+			int i = 1;
 			do {
 				values[i] = cursor.getString(Country.COL_IDX_ID);
 				entries[i] = cursor.getString(Country.COL_IDX_NAME);
