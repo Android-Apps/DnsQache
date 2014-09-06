@@ -1,7 +1,8 @@
 # DnsQache DNS and HTTP/HTTPS Proxy for Tether Root Users
 --------------------------
 
-DNS and HTTP/HTTPS Proxy caching for Tether Root Users
+## General Thread Discussion and Support
+Visit the [XDA Thread](http://forum.xda-developers.com/showthread.php?t=2575894).
 
 ## First and foremost:
 
