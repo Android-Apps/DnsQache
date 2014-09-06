@@ -1,13 +1,13 @@
-* DnsQache DNS and HTTP/HTTPS Proxy for Tether Root Users
+# DnsQache DNS and HTTP/HTTPS Proxy for Tether Root Users
 --------------------------
 
 DNS and HTTP/HTTPS Proxy caching for Tether Root Users
 
-First and foremost:
+## First and foremost:
 
-*** Use this application at your own risk. It is possible that use of this
+**Use this application at your own risk. It is possible that use of this
 program may violate your carrier's Terms of Use/Terms of Service. Read the
-DISCLAIMER.txt file before committing to the use of this application.***
+DISCLAIMER.txt file before committing to the use of this application.**
 
 
 Second, the author of this program would like to thank Harry Mue and Sofia
@@ -17,7 +17,7 @@ DnsQache borrow from ideas and indeed implementation from Harry's and Sofia's
 code base, therefore this body of code carries his license and Copyright (duly
 noted in the DISCLAIMER.txt and the code, where appropriate).
 
-** PREREQUISITES **
+## Prerequisites
 
 1) A rooted Android phone with busybox -- you should know how to, and have
 already, rooted your phone and get busybox operational on the same phone;
@@ -26,12 +26,12 @@ netfilter (IPTABLES), but it's a good idea to check to be sure);
 3) If using Harry Mue's and Sofia Lemons' wifi tether application, assure you
 use a version released after July 18, 2013.
 
-** General Description and Use **
+## General Description and Use
 This program enables the use of custom DNS name servers and caching as well as
 HTTP/HTTPS proxy and caching for Android Rooted phones.
 
 
-Custom DNS Provider and Query Caching
+### Custom DNS Provider and Query Caching
 
 To use the program for just DNS caching and redirection, install and start the
 program. Thereafter, check the options in the "System|Settings: DNS" menu and
@@ -69,7 +69,7 @@ issue there is if you use custom IP addresses for the DNS name servers and
 dnsmasq ultimately fails to start due to such configuration error.
 
 
-Using the HTTP/HTTPS Proxy
+### Using the HTTP/HTTPS Proxy
 
 Generally, for proxy use, clients (your laptop for example) can connect via
 wifi to your phone, when tethering, and get access to the internet using the
@@ -109,7 +109,7 @@ using the polipo proxy, proxy caching of content takes place on the phone,
 though secured pages (HTTPS) should not end up cached. 
 
 
-** Some Credits: **
+## Some Credits:
 The front page, and indeed the service layer code was inspired by, and to some
 extent, borrows from the venerable android-wifi-tether project originally
 authored by Harry Mue (harald.mue@gmail.com) and Sofia Lemons. While inspired
