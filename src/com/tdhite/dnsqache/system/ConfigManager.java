@@ -77,7 +77,6 @@ public class ConfigManager
 	public static final String PREF_UI_DNS_LOG_QUERIES = "dnsmasq.log-queries";
 	public static final String PREF_DNS_PROVIDER = "dnsqache.provider";
 	public static final String PREF_DNS_COUNTRY_CODE = "dnsqache.country-code";
-	public static final String PREF_DNS_COUNTRY_CODE_DEFAULT = "US";
 
 	public static final String PREF_PROXY_TYPE = "proxy.type";
 	public static final String PREF_PROXY_DEFAULT_TYPE = "polipo";

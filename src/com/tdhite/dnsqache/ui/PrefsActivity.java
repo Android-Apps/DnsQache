@@ -158,13 +158,20 @@ public class PrefsActivity extends Activity
 				{
 					updateCountryCode(sharedPreferences, listPref);
 				}
-				else if (pref.getKey().equals(ConfigManager.PREF_NAMESERVER_PRIMARY))
+				else
 				{
-					updatePrimaryDns(sharedPreferences, listPref);
-				}
-				else if (pref.getKey().equals(ConfigManager.PREF_NAMESERVER_SECONDARY))
-				{
-					updateSecondaryDns(sharedPreferences, listPref);
+					CursorListPreference countries = (CursorListPreference) this
+							.findPreference(ConfigManager.PREF_DNS_COUNTRY_CODE);
+					if (!countries.getValue().equals(
+							this.getActivity().getString(R.string.text_none))) {
+						if (pref.getKey().equals(
+								ConfigManager.PREF_NAMESERVER_PRIMARY)) {
+							updatePrimaryDnsFromList(sharedPreferences, listPref);
+						} else if (pref.getKey().equals(
+								ConfigManager.PREF_NAMESERVER_SECONDARY)) {
+							updateSecondaryDnsFromList(sharedPreferences, listPref);
+						}
+					}
 				}
 			}
 			else if (pref instanceof ListPreference)
@@ -225,22 +232,26 @@ public class PrefsActivity extends Activity
 			}
 		}
 
-		private void updatePrimaryDns(SharedPreferences sharedPreferences,
-				CursorListPreference listPref) {
+		private void updatePrimaryDnsFromList(SharedPreferences sharedPreferences,
+				CursorListPreference listPref)
+		{
 			EditTextPreference primary = (EditTextPreference) this
 					.findPreference(ConfigManager.PREF_DNSQACHE_CUSTOM_PRIMARY);
 			primary.setText(listPref.getValue());
 			sharedPreferences.edit().putString(
-					ConfigManager.PREF_DNSQACHE_CUSTOM_PRIMARY, listPref.getValue());
+					ConfigManager.PREF_DNSQACHE_CUSTOM_PRIMARY,
+					listPref.getValue());
 		}
 
-		private void updateSecondaryDns(SharedPreferences sharedPreferences,
-				CursorListPreference listPref) {
-			EditTextPreference primary = (EditTextPreference) this
+		private void updateSecondaryDnsFromList(SharedPreferences sharedPreferences,
+				CursorListPreference listPref)
+		{
+			EditTextPreference secondary = (EditTextPreference) this
 					.findPreference(ConfigManager.PREF_DNSQACHE_CUSTOM_SECONDARY);
-			primary.setText(listPref.getValue());
+			secondary.setText(listPref.getValue());
 			sharedPreferences.edit().putString(
-					ConfigManager.PREF_DNSQACHE_CUSTOM_SECONDARY, listPref.getValue());
+					ConfigManager.PREF_DNSQACHE_CUSTOM_SECONDARY,
+					listPref.getValue());
 		}
 
 		private void updateCountryCode(SharedPreferences sharedPreferences,
@@ -258,20 +269,28 @@ public class PrefsActivity extends Activity
 					.findPreference(ConfigManager.PREF_NAMESERVER_PRIMARY);
 			CursorListPreference secondary = (CursorListPreference) this
 					.findPreference(ConfigManager.PREF_NAMESERVER_SECONDARY);
+			EditTextPreference primaryEdit = (EditTextPreference) this
+					.findPreference(ConfigManager.PREF_DNSQACHE_CUSTOM_PRIMARY);
+			EditTextPreference secondaryEdit = (EditTextPreference) this
+					.findPreference(ConfigManager.PREF_DNSQACHE_CUSTOM_SECONDARY);
 
 			if (countryListPref.getValue().equals(this.getActivity().getString(R.string.text_none)))
 			{
 				primary.setEnabled(false);
 				secondary.setEnabled(false);
+				primaryEdit.setEnabled(true);
+				secondaryEdit.setEnabled(true);
 			}
 			else
 			{
 				primary.setEnabled(true);
 				secondary.setEnabled(true);
+				primaryEdit.setEnabled(false);
+				secondaryEdit.setEnabled(false);
 				primary.setProviderData(countryListPref.getValue());
 				secondary.setProviderData(countryListPref.getValue());
-				this.updatePrimaryDns(sharedPreferences, primary);
-				this.updateSecondaryDns(sharedPreferences, secondary);
+				this.updatePrimaryDnsFromList(sharedPreferences, primary);
+				this.updateSecondaryDnsFromList(sharedPreferences, secondary);
 			}
 		}
 
