@@ -45,7 +45,7 @@ public class NetworkHandler extends Handler
 		{
 			Log.d(TAG, "handleMessage called but got NULL for QacheService.getSingleton()");
 		}
-		else
+		else if (mNetworkConnectivityListener.isFailover())
 		{
 			svc.setDns();
 		}
